@@ -19,7 +19,4 @@ from django.conf.urls import include
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^director/', include('apps_cenco.director.urls')),
-    url(r'^profesor/', include('apps_cenco.profesor.urls')),
-    url(r'^supervisor/', include('apps_cenco.supervisor.urls')),
 ]
