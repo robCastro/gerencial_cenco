@@ -35,7 +35,7 @@
 
         </a>
         <a href="http://www.creative-tim.com" class="simple-text logo-normal">
-          Creative Tim
+          Gerencia Cenco
           <!-- <div class="logo-image-big">
             <img src="../assets/img/logo-big.png">
           </div> -->
@@ -61,7 +61,7 @@
                 <span class="navbar-toggler-bar bar3"></span>
               </button>
             </div>
-            <a class="navbar-brand" href="#">Paper Dashboard 2</a>
+            {# <a class="navbar-brand" href="#">Paper Dashboard 2</a> #}
           </div>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-bar navbar-kebab"></span>
@@ -84,7 +84,9 @@
 </div> -->
       <div class="content">
         <div class="row">
-
+          {% block main_content %}
+            
+          {% endblock%}
 
         </div>
       </div>
