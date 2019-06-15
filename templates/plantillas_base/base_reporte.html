@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+	<title>CENCO</title>
+
+	<style type="text/css">
+		body{
+			margin-top : 2.5cm;
+			margin-right : 3cm;
+			margin-bottom : 2.5cm;
+			margin-left : 3cm;
+			height: 27.9cm;
+		}
+
+		.pagina{
+			/**/
+			width : 100%;
+		}
+
+		.membretado{
+			width: 100%;
+			vertical-align: top;
+			margin: 0;
+		}
+
+		.texto-membrete { 
+			/* https://www.cssfontstack.com/Tahoma */
+			font-family: Tahoma; 
+			font-size: 12px; 
+			/*TamaÃ±o 9 de word corresponde a 12px ( https://websemantics.uk/articles/font-size-conversion/ )*/
+			font-style: normal; 
+			font-variant: normal; 
+			font-weight: 590; 
+			line-height: 5.5px;
+			text-align: right;
+			vertical-align: top; 
+			color: black;
+		}
+
+		.texto-general{ 
+			font-family: TimesNewRoman; 
+			font-size: 16px; 
+			font-style: normal; 
+			font-variant: normal; 
+			font-weight: 400; 
+			line-height: 20px;
+			color: black;
+			text-align: justify;
+		}
+
+		.texto-sub{ 
+			font-family: TimesNewRoman; 
+			font-size: 14px; 
+			font-style: normal; 
+			font-variant: normal; 
+			font-weight: 400; 
+			line-height: 18px;
+			color: black;
+			text-align: justify;
+		}
+
+		.fecha{
+			width: 100%;
+			padding-top: 1.5cm;
+		}
+
+		.titulo{
+			width: 100%;
+			/*padding-top: 2.5cm;*/
+		}
+
+		.contenido{
+			width: 100%;
+			padding-top: 1.5cm;
+		}
+		@yield('style-pie')
+		/*.pie{
+			width: 100%;
+			padding-top: 2cm;
+			padding-bottom: 3.5cm;
+		}*/
+
+		td{margin-left: 0;}
+	</style>
+
+</head>
+<body>
+	{#Inicio de Reporte#}
+	<div class="pagina">
+
+
+		<div class="titulo">
+			<p class="texto-general" style="text-align: center;"><b>Centro de Enseñanza en Computación</b></p>
+			<p class="texto-general" style="text-align: center;"><b>Unidad Académica</b></p>
+			<p class="texto-general" style="text-align: center;"><b>
+				{% block titulo-reporte %}
+				{% endblock %}
+			</b></p>
+			<p class="texto-sub" style="text-align: center;">
+				{% block subtitulo-reporte %}
+				{% endblock %}
+			</p>
+		</div>
+
+		
+		<div class="contenido">
+			{% block contenido-reporte %}	
+			{% endblock %}
+		</div>
+
+
+		<div class="pie">
+			<p class="texto-general" style="text-align: right;"></p>
+			<p class="texto-general" style="text-align: right;"></p>
+		</div>
+
+		
+	</div>	
+	{#Fin de Reporte#}
+</body>
+</html>

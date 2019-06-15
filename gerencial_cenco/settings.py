@@ -25,7 +25,7 @@ SECRET_KEY = '#w3hc*3$@u^a#31+9_#)h%4(g@(a6cm)en+9ynq3fl+wjrgh-$'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'wkhtmltopdf',
     'apps_cenco.db_app.apps.DbAppConfig',
 ]
 
@@ -78,10 +79,10 @@ WSGI_APPLICATION = 'gerencial_cenco.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'd1ge7dmhl9tia2',
-        'USER': 'juhrvkpdmlunhe',
-        'PASSWORD': '582a3924f2a106c332993464f48aa20ef6322267a64e956a8f5f2d7d0e80e674',
-        'HOST': 'ec2-107-22-238-217.compute-1.amazonaws.com',
+        'NAME': 'postgres',
+        'USER': 'postgres',
+        'PASSWORD': 'postgres',
+        'HOST': 'localhost',
         'PORT': '5432',
     }
 }
@@ -131,5 +132,6 @@ STATIC_URL = '/static/'
 
 MEDIA_URL = '/media/'
 
-MEDIA_ROOT = os.path.join(BASE_DIR, '')
+MEDIA_ROOT = os.path.join(BASE_DIR, '../media')
 
+STATIC_ROOT = os.path.join(BASE_DIR, '../static')
