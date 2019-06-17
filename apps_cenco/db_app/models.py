@@ -25,8 +25,15 @@ class Empleado (models.Model):
     isss = models.CharField(max_length=9)
     afp = models.CharField(max_length=12)
     nit = models.CharField(max_length=17)
-    tipo = models.CharField(max_length=3)
-    estado=models.CharField(max_length=8)
+    opciones_tipo = (
+        ('Dir', 'Director'),
+        ('Pro', 'Profesor'),
+        ('Sup', 'Supervisor'))
+    tipo = models.CharField(max_length=3, choices=opciones_tipo, default='Pro')
+    opciones_estado=(
+        ('activo','activo'),
+        ('inactivo', 'inactivo'))
+    estado=models.CharField(max_length=8, choices=opciones_estado, default='activo')
 
 class Horario (models.Model):
     codigo = models.AutoField(primary_key=True)

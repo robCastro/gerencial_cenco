@@ -79,12 +79,14 @@ WSGI_APPLICATION = 'gerencial_cenco.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST': 'localhost',
+        'NAME': 'd1ge7dmhl9tia2',
+        'USER': 'juhrvkpdmlunhe',
+        'PASSWORD': '582a3924f2a106c332993464f48aa20ef6322267a64e956a8f5f2d7d0e80e674',
+        'HOST': 'ec2-107-22-238-217.compute-1.amazonaws.com',
         'PORT': '5432',
     }
+
+
 }
 
 
@@ -135,3 +137,8 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, '../media')
 
 STATIC_ROOT = os.path.join(BASE_DIR, '../static')
+
+WKHTMLTOPDF_CMD = "C:/Program Files/wkhtmltopdf/bin/wkhtmltopdf.exe"
+
+LOGIN_REDIRECT_URL = '/'
+
