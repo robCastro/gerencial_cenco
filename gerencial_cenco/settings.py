@@ -25,7 +25,7 @@ SECRET_KEY = '#w3hc*3$@u^a#31+9_#)h%4(g@(a6cm)en+9ynq3fl+wjrgh-$'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'wkhtmltopdf',
     'apps_cenco.db_app.apps.DbAppConfig',
 ]
 
@@ -84,6 +85,8 @@ DATABASES = {
         'HOST': 'ec2-107-22-238-217.compute-1.amazonaws.com',
         'PORT': '5432',
     }
+
+
 }
 
 
@@ -131,5 +134,11 @@ STATIC_URL = '/static/'
 
 MEDIA_URL = '/media/'
 
-MEDIA_ROOT = os.path.join(BASE_DIR, '')
+MEDIA_ROOT = os.path.join(BASE_DIR, '../media')
+
+STATIC_ROOT = os.path.join(BASE_DIR, '../static')
+
+WKHTMLTOPDF_CMD = "C:/Program Files/wkhtmltopdf/bin/wkhtmltopdf.exe"
+
+LOGIN_REDIRECT_URL = '/'
 

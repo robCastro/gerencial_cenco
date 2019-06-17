@@ -16,10 +16,15 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 from django.conf.urls import include
+from django.contrib.auth import views as auth_views
+from apps_cenco.login.views import *
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^director/', include('apps_cenco.director.urls')),
     url(r'^profesor/', include('apps_cenco.profesor.urls')),
     url(r'^supervisor/', include('apps_cenco.supervisor.urls')),
+    url(r'^accounts/login/$', auth_views.login,{'template_name': 'Login/login.html'}, name='login' ),
+    url(r'^logout/$', auth_views.logout, {'template_name': 'Login/logout.html'}, name='logout'),
+    url(r'^$', principal, name="inicio"),
 ]
