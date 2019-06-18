@@ -5,17 +5,23 @@ from django.shortcuts import render
 
 from datetime import datetime
 from wkhtmltopdf.views import PDFTemplateView
+from django.contrib.auth.decorators import permission_required, login_required
+from django.http import Http404, HttpResponse
+
 
 # Create your views here.
-
+@login_required
 def verIngresosRetirosEstudiantes(request):
-	fechaHoy = str((datetime.now().date().strftime("%m/%d/%Y")))
-	#fechaInicio = datetime.strptime(datetime.now().date() - timedelta(days = 7), "%d/%m/%Y").date()
-	context = {
-		'fechaHoy' : fechaHoy,
-		#'fechaInicio' : fechaInicio,
-	}
-	return render(request, 'director/ingresos-retiros-estudiantes.html', context)
+	if request.user.groups.filter(name="Director").exists():
+		fechaHoy = str((datetime.now().date().strftime("%m/%d/%Y")))
+		#fechaInicio = datetime.strptime(datetime.now().date() - timedelta(days = 7), "%d/%m/%Y").date()
+		context = {
+			'fechaHoy' : fechaHoy,
+			#'fechaInicio' : fechaInicio,
+		}
+		return render(request, 'director/ingresos-retiros-estudiantes.html', context)
+	else:
+		raise Http404('Error, no tiene permiso para esta página')
 
 def verDesempenioDidactico(request):
 	fechaHoy = str((datetime.now().date().strftime("%m/%d/%Y")))
