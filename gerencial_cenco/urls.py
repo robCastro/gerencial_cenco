@@ -24,6 +24,7 @@ urlpatterns = [
     url(r'^director/', include('apps_cenco.director.urls')),
     url(r'^profesor/', include('apps_cenco.profesor.urls')),
     url(r'^supervisor/', include('apps_cenco.supervisor.urls')),
+    url(r'^seguridad/', include('apps_cenco.login.urls')),
     url(r'^accounts/login/$', auth_views.login,{'template_name': 'Login/login.html'}, name='login' ),
     url(r'^logout/$', auth_views.logout, {'template_name': 'Login/logout.html'}, name='logout'),
     url(r'^$', principal, name="inicio"),
