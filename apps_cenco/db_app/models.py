@@ -16,7 +16,7 @@ class Sucursal(models.Model):
 class Empleado (models.Model):
     codigo = models.AutoField(primary_key=True)
     username = models.OneToOneField(User, blank=True, null=True, on_delete=models.CASCADE)
-    sucursal =models.ForeignKey(Sucursal, on_delete=models.PROTECT, blank=True)
+    sucursal =models.ForeignKey(Sucursal, on_delete=models.CASCADE, blank=True)
     nombre = models.CharField(max_length=40)
     apellido = models.CharField(max_length=40)
     direccion = models.TextField()
@@ -47,8 +47,8 @@ class Grupo(models.Model):
     fechaInicio = models.DateField()
     alumnosInscritos = models.IntegerField(default=0)
     activo_grupo = models.BooleanField(default=True)
-    horario = models.ForeignKey(Horario, on_delete=models.PROTECT)
-    profesor = models.ForeignKey(Empleado, on_delete=models.PROTECT, blank=False)
+    horario = models.ForeignKey(Horario, on_delete=models.CASCADE)
+    profesor = models.ForeignKey(Empleado, on_delete=models.CASCADE, blank=False)
 
 class Encargado (models.Model):
     codigo = models.AutoField(primary_key=True)
@@ -69,9 +69,9 @@ class Alumno (models.Model):
     dui = models.CharField(max_length=10, blank=True, null=True)
     solvente = models.BooleanField(default=False)
     # foreign keys
-    encargado = models.ForeignKey(Encargado, on_delete=models.PROTECT, null=True, blank=True)
+    encargado = models.ForeignKey(Encargado, on_delete=models.CASCADE, null=True, blank=True)
     username = models.OneToOneField(User, blank=True, null=True, on_delete=models.CASCADE)
-    sucursal = models.ForeignKey(Sucursal, blank=True, on_delete=models.PROTECT)
+    sucursal = models.ForeignKey(Sucursal, blank=True, on_delete=models.CASCADE)
 
 class Telefono (models.Model):
     codigo = models.AutoField(primary_key=True)
@@ -86,8 +86,8 @@ class Inscripcion(models.Model):
     fecha_inscripcion = models.DateField()
     actual_inscripcion = models.BooleanField(default=True)
     # foreign keys
-    alumno = models.ForeignKey(Alumno, on_delete=models.PROTECT, null=False, blank=False)
-    grupo = models.ForeignKey(Grupo, on_delete=models.PROTECT, null=True, blank=True)
+    alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE, null=False, blank=False)
+    grupo = models.ForeignKey(Grupo, on_delete=models.CASCADE, null=True, blank=True)
 
 class Asistencia(models.Model):
     codigo_asistencia = models.AutoField(primary_key=True)
@@ -118,7 +118,7 @@ class Carrera(models.Model):
     permitir_inscripcion = models.BooleanField(default=True)
     pensum_mes_carrera = models.IntegerField(blank=False, default=10)
     pensum_anio_carrera = models.IntegerField(blank=False, default=2018)
-    sucursal = models.ForeignKey(Sucursal,on_delete=models.PROTECT, blank=True)
+    sucursal = models.ForeignKey(Sucursal,on_delete=models.CASCADE, blank=True)
 
 class Materia(models.Model):
     codigo_materia = models.AutoField(primary_key=True)
@@ -130,8 +130,8 @@ class DetallePensum(models.Model):
     codigo_detalle_p = models.AutoField(primary_key=True)
     ordinal_materia_cursa = models.IntegerField(blank=False)
     # foreign keys
-    materia = models.ForeignKey(Materia, on_delete=models.PROTECT, null=False, blank=False)
-    carrera = models.ForeignKey(Carrera, on_delete=models.PROTECT, null=False, blank=False)
+    materia = models.ForeignKey(Materia, on_delete=models.CASCADE, null=False, blank=False)
+    carrera = models.ForeignKey(Carrera, on_delete=models.CASCADE, null=False, blank=False)
 
 class Expediente(models.Model):
     codigo_expediente = models.AutoField(primary_key=True)
@@ -141,16 +141,16 @@ class Expediente(models.Model):
     pagado_hasta = models.DateField()
     progreso_expediente = models.DecimalField(max_digits=4, decimal_places=2, default=0.0)
     # foreign keys
-    alumno = models.ForeignKey(Alumno, on_delete=models.PROTECT, null=True)
-    carrera = models.ForeignKey(Carrera, on_delete=models.PROTECT, null=True)
+    alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE, null=True)
+    carrera = models.ForeignKey(Carrera, on_delete=models.CASCADE, null=True)
 
 class Cursa(models.Model):
     codigo_cursa = models.AutoField(primary_key=True)
     nota_final = models.DecimalField(max_digits=6, decimal_places=4, null=True)
     actual_cursa = models.BooleanField(default=True)
     # foreign keys
-    materia = models.ForeignKey(Materia, on_delete=models.PROTECT, null=False, blank=False)
-    alumno = models.ForeignKey(Alumno, on_delete=models.PROTECT, null=False, blank=False)
+    materia = models.ForeignKey(Materia, on_delete=models.CASCADE, null=False, blank=False)
+    alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE, null=False, blank=False)
 
 class Examen(models.Model):
     codigo_examen = models.AutoField(primary_key=True)
@@ -158,7 +158,7 @@ class Examen(models.Model):
     ponderacion_examen = models.DecimalField(max_digits=5, decimal_places=4)
     fecha_realizacion_examen= models.DateField()
     # foreign keys
-    materia = models.ForeignKey(Materia, on_delete=models.PROTECT, null=False, blank=False)
+    materia = models.ForeignKey(Materia, on_delete=models.CASCADE, null=False, blank=False)
 
 class Evaluacion(models.Model):
     codigo_evaluacion = models.AutoField(primary_key=True)
@@ -168,9 +168,9 @@ class Evaluacion(models.Model):
     fecha_ingreso_evaluacion = models.DateField(auto_now=True)
     # fecha_realizacion_evaluacion = models.DateField()
     # foreign keys
-    profesor = models.ForeignKey(Empleado, on_delete=models.PROTECT, null=True, blank=True)
-    cursa = models.ForeignKey(Cursa, on_delete=models.PROTECT, null=False, blank=False)
-    examen = models.ForeignKey(Examen, on_delete=models.PROTECT, null=False, blank=False)
+    profesor = models.ForeignKey(Empleado, on_delete=models.CASCADE, null=True, blank=True)
+    cursa = models.ForeignKey(Cursa, on_delete=models.CASCADE, null=False, blank=False)
+    examen = models.ForeignKey(Examen, on_delete=models.CASCADE, null=False, blank=False)
 
 class Colegiatura(models.Model):
     codigo_colegiatura = models.AutoField(primary_key=True)
@@ -178,7 +178,7 @@ class Colegiatura(models.Model):
     forma_pago = models.CharField(max_length=100, null=False, blank=False)
     actual_colegiatura = models.BooleanField(default=True)
     # foreign keys
-    expediente = models.ForeignKey(Expediente, on_delete=models.PROTECT, null=False, blank=False)
+    expediente = models.ForeignKey(Expediente, on_delete=models.CASCADE, null=False, blank=False)
 
 class DetallePago(models.Model):
     codigo_detalle_pago = models.AutoField(primary_key=True)
@@ -188,7 +188,7 @@ class DetallePago(models.Model):
     cantidad_semanas = models.IntegerField(blank=False)
     en_cola = models.BooleanField(default=False)
     # foreign keys
-    colegiatura = models.ForeignKey(Colegiatura, on_delete=models.PROTECT, null=False, blank=False)
+    colegiatura = models.ForeignKey(Colegiatura, on_delete=models.CASCADE, null=False, blank=False)
 
 
 
