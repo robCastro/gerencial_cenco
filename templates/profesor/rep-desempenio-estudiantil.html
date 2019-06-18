@@ -1,0 +1,35 @@
+{% extends "plantillas_base/base_reporte.html" %}
+
+{% block titulo-reporte %}
+	Reporte de Desempeño Estudiantil
+{% endblock titulo-reporte %}
+
+{% block subtitulo-reporte %}
+	Generado el {{fechaHoy}}
+{% endblock subtitulo-reporte %}
+
+{% block contenido-reporte %}
+	<h6><b>Grupo de: XXX</b></h6>
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Nombre</th>
+				<th>Encargado</th>
+				<th>Calificacion</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>xxxxxxxxxxxxx</td>
+				<td>xxxxxxxx</td>
+				<td>99.99</td>
+			</tr>
+            <tr>
+				<td>xxxxxxxxxxxxx</td>
+				<td>xxxxxxxx</td>
+				<td>99.99</td>
+			</tr>
+        </tbody>
+	</table>
+
+{% endblock contenido-reporte %}
