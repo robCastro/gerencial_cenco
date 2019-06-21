@@ -9,6 +9,7 @@ from django.contrib.auth.decorators import permission_required, login_required
 from django.http import Http404, HttpResponse
 from apps_cenco.db_app.models import Inscripcion, Estado, Empleado, Sucursal, DetallePago
 from django.views.generic import ListView
+from django.db import connections
 
 ##Entradas
 @login_required
@@ -33,19 +34,16 @@ def verIngresosRetirosEstudiantes(request):
 	else:
 		raise Http404('Error, no tiene permiso para esta página')
 
-def verDesempenioDidactico(request):
-	fechaHoy = str((datetime.now().date().strftime("%m/%d/%Y")))
+def verDesempenioDidactico(request):	#Salida Incluida
+	fechaHoy = datetime.now().date()
+	sucursal = Empleado.objects.get(username = request.user).sucursal
+	profesores = consultaDesempenioProfesores(sucursal)
 	context = {
 		'fechaHoy' : fechaHoy,
+		'sucursal' : sucursal,
+		'profesores': profesores,
 	}
 	return render(request, 'director/desempenio-didactico.html', context)
-
-def verDesempenioSucursal(request):
-	fechaHoy = str((datetime.now().date().strftime("%m/%d/%Y")))
-	context = {
-		'fechaHoy' : fechaHoy,
-	}
-	return render(request, 'director/desempenio-sucursal.html', context)
 
 
 
@@ -71,13 +69,6 @@ def verSalidaIngresosRetirosEstudiantes(request):
 			'retiros' : retiros
 		}
 		return render(request, 'director/sal-ingresos-retiros-estudiantes.html', context)
-
-def verSalidaDesempenioSucursal(request):
-	fechaHoy = str((datetime.now().date().strftime("%m/%d/%Y")))
-	context = {
-		'fechaHoy' : fechaHoy,
-	}
-	return render(request, 'director/sal-desempenio-sucursal.html', context)
 
 
 
@@ -107,16 +98,50 @@ class RepIngresosRetirosEstudiantes(PDFTemplateView):
 			context['retiros'] = consultaIngresosRetirosEstudiantes(fechaInicio, fechaFin, 'Retirados', sucursal)['detalles']
 		return context
 
+class RepDesempenioProfesores(PDFTemplateView):
+	filename = 'Reporte_Estudiantes.pdf'
+	template_name = 'director/rep-ingresos-retiros-estudiantes.html'
+	show_content_in_browser=True
+	def get_context_data(self, **kwargs):
+		context = super(RepDesempenioProfesores, self).get_context_data(**kwargs)
+		idSucursal = self.kwargs['idSucursal']
+		try:
+			sucursal = Sucursal.objects.get(codigo_sucursal = idSucursal)
+		except Sucursal.DoesNotExist:
+			sucursal = Sucursal.objects.first()
+		profesores = consultaDesempenioProfesores(sucursal)
+		context['fechaHoy'] = datetime.now().date()
+		context['profesores'] = profesores
+		return context
+
 
 
 ##Consultas Auxiliares
 def consultaIngresosRetirosEstudiantes(fechaInicio, fechaFin, tipo_estado, sucursal):
 	estado = Estado.objects.get(tipo_estado = tipo_estado)
-	for carrera in sucursal.carrera_set.all():
-		print carrera.nombre_carrera
 	detalles = estado.detalleestado_set.filter(fecha_detalle_e__range=(fechaInicio, fechaFin), alumno__sucursal = sucursal)
 	context = {
 		'detalles' : detalles
 	}
 	return context
 
+def consultaDesempenioProfesores(sucursal):
+	with connections['default'].cursor() as cursorSG:
+		cursorSG.execute("""
+			select concat(em1.nombre,' ', em1.apellido) as nombre, alumnos, nota from 
+				(select em.codigo as codigo, em.nombre, em.apellido, count(*) as alumnos from db_app_inscripcion
+				inner join db_app_grupo gr on grupo_id = gr.codigo
+				inner join db_app_empleado em on em.codigo = profesor_id
+				where actual_inscripcion = true
+				group by em.codigo, em.nombre, em.apellido
+				) as em1,
+				(select em.codigo as codigo, em.nombre, em.apellido, round(avg(nota_evaluacion), 2) as nota 
+				from db_app_evaluacion
+				inner join db_app_empleado em on em.codigo = profesor_id
+				where em.sucursal_id = {}
+				group by em.codigo, em.nombre, em.apellido
+				) as em2
+			where em1.codigo = em2.codigo
+			order by nota asc;
+		""".format(sucursal.codigo_sucursal))
+		return cursorSG.fetchall()

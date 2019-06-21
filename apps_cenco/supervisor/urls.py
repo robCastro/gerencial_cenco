@@ -6,6 +6,7 @@ urlpatterns = [
 
 	#Entradas
 	url(r'^ingreso_econ_suc/$', views.verIngresoEconSuc, name="ingreso_econ_suc"),
+	url(r'^desempenio_sucursal/$', views.verDesempenioSucursal, name="desempenio_sucursal"),
 
 
 
@@ -13,6 +14,10 @@ urlpatterns = [
 	url(r'^salida_ingreso_econ_suc/$',
 		views.verSalidaIngresoEconSuc,
 		name="sal_ingreso_econ_suc"),
+
+	url(r'^salida_desempenio_sucursal/$',
+		views.verSalidaDesempenioSucursal,
+		name="sal_desempenio_sucursal"),
 
 
 

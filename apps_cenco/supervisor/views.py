@@ -27,6 +27,12 @@ def verIngresoEconSuc(request):
 	}
 	return render(request, 'supervisor/ingresos-econ-suc.html', context)
 
+def verDesempenioSucursal(request):
+	fechaHoy = str((datetime.now().date().strftime("%m/%d/%Y")))
+	context = {
+		'fechaHoy' : fechaHoy,
+	}
+	return render(request, 'supervisor/desempenio-sucursal.html', context)
 
 
 
@@ -46,6 +52,12 @@ def verSalidaIngresoEconSuc(request):
 	}
 	return render(request, 'supervisor/sal-ingresos-econ-suc.html', context)
 
+def verSalidaDesempenioSucursal(request):
+	fechaHoy = str((datetime.now().date().strftime("%m/%d/%Y")))
+	context = {
+		'fechaHoy' : fechaHoy,
+	}
+	return render(request, 'supervisor/sal-desempenio-sucursal.html', context)
 
 
 

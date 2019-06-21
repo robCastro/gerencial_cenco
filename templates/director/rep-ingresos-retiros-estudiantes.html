@@ -1,54 +1,30 @@
 {% extends "plantillas_base/base_reporte.html" %}
 
 {% block titulo-reporte %}
-	Reporte de Inscripciones y Retiros de Estudiantes
+	Reporte de Desempeño Didactico
 {% endblock titulo-reporte %}
 
 {% block subtitulo-reporte %}
-	Generado el {{fechaHoy|date:"d/m/Y"}}, desde {{fechaInicio|date:"d/m/Y"}} hasta {{fechaFin|date:"d/m/Y"}}.
+	Generado el {{fechaHoy|date:"d/m/Y"}}.
 {% endblock subtitulo-reporte %}
 
 {% block contenido-reporte %}
-	{% if not detalles == None %}
-		<h6><b>INSCRITOS: {{detalles.count}} EN TOTAL</b></h6>
-		<table class="table">
-			<thead>
-				<tr>
-					<th>Nombre</th>
-					<th>Fecha de Inscripcion</th>
-					<th>Carrera</th>
-				</tr>
-			</thead>
-			<tbody>
-				{% for detalle in detalles  %}
-					<tr>
-						<td>{{detalle.alumno.nombre}} {{detalle.alumno.apellido}}</td>
-						<td>{{detalle.fecha_detalle_e|date:"d/m/Y"}}</td>
-						<td>{{detalle.alumno.expediente_set.first.carrera.nombre_carrera}}</td>
-					</tr>
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Profesor</th>
+				<th>Alumnos que atiende</th>
+				<th>Calificación</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for profesor in profesores %}
+			<tr>
+				{% for elemento in profesor %}
+					<td>{{elemento}}</td>
 				{% endfor %}
-		</table>
-	{% endif %}
-	
-	{% if not retiros == None  %}
-		<h6 style="padding-top: 1.5cm;"><b>RETIROS: {{retiros.count}} EN TOTAL</b></h6>
-		<table class="table">
-			<thead>
-				<tr>
-					<th>Nombre</th>
-					<th>Fecha de Retiro</th>
-					<th>Carrera</th>
-				</tr>
-			</thead>
-			<tbody>
-				{% for retiro in retiros %}
-					<tr>
-						<td>{{retiro.alumno.nombre}} {{retiro.alumno.apellido}}</td>
-						<td>{{retiro.fecha_detalle_e}}</td>
-						<td>{{retiro.alumno.expediente_set.first.carrera.nombre_carrera}}</td>
-					</tr>
-				{% endfor %}
-			</tbody>
-		</table>
-	{% endif %}
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
 {% endblock contenido-reporte %}
