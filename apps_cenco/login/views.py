@@ -25,8 +25,9 @@ def principal(request):
             return redirect('desempenio_estudiantil')
 
         elif has_group(request.user, 'Supervisor'):
-            return redirect('desempenio_estudiantil')
-
+            return redirect('')
+        elif request.user.is_superuser:
+            return redirect('etl')
     else:
         return redirect('login')
 
@@ -41,7 +42,6 @@ def verPantallaETL(request):
     esDanger = False
     if request.method == 'POST':
         try:
-
             ##LIMPIANDO LA BD GERENCIAL
             User.objects.filter(is_superuser = False).delete() ##Eliminacion en Cascada, alv
             #Group.objects.all().delete()
@@ -131,6 +131,20 @@ def verPantallaETL(request):
             evaluaciones = Evaluacion.objects.using('st_cenco').all()
             for evaluacionST in evaluaciones:
                 evaluacionST.save(using='default')
+
+
+
+            ### Corrigiendo sequence de auth_user, los demas no se espera insecion de usuarios
+            with connections['default'].cursor() as cursorSG2:
+                cursorSG2.execute('Select max(id) from auth_user;')
+                id_max = cursorSG2.fetchone()
+                print 'max id:' + str(id_max);
+                cursorSG2.execute("alter sequence auth_user_id_seq restart with {}".format(str(id_max[0] + 1)))
+                cursorSG2.execute('Select max(id) from auth_user_groups;')
+                id_max = cursorSG2.fetchone()
+                cursorSG2.execute("alter sequence auth_user_groups_id_seq restart with {}".format(str(id_max[0] + 1)))
+
+
             msj = "ETL finalizado con exito"
         except:
             msj = "Ocurrió un Error al realizar el ETL, notificar a Técnico"

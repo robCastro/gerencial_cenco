@@ -12,54 +12,62 @@
 
 {% block main_content %}
 	<div class="col-md-12">
-		<div class="card">
-			<div class="card-header">
-				<h5 class="title">Reporte de Inscripciones y Retiro de Estudiantes</h5>
-			</div>
-			<div class="card-body">
-				<form>
-					{% csrf_token %}
-					<div class="row justify-content-center">
-						<div class="col-md-3">
-							<h6 class="ml-5 pt-2">Filtro:</h6>
+		<form method="POST">
+			<div class="card">
+				<div class="card-header">
+					<h5 class="title">Reporte de Inscripciones y Retiro de Estudiantes</h5>
+				</div>
+				<div class="card-body">
+					
+						{% csrf_token %}
+						<div class="row justify-content-center">
+							<div class="col-md-3">
+								<h6 class="ml-5 pt-2">Filtro:</h6>
+							</div>
+							<div class="col-md-3">
+								
+								<select class="form-control" name="tipo">
+									<option value="1">Inscritos</option>
+									<option value="2">Retirados</option>
+									<option value="3">Todos</option>
+								</select>
+							</div>
 						</div>
-						<div class="col-md-3">
-							
-							<select class="form-control">
-								<option>Inscritos</option>
-								<option>Retirados</option>
-								<option>Todos</option>
-							</select>
+						<div class="row mt-4 justify-content-center">
+							<div class="col-md-3">
+								<h6 class="ml-5 pt-2">Fecha Inicio:</h6>
+							</div>
+							<div class="col-md-3">
+								<input type="date" name="fecha_inicio" class="form-control" value="{{fechaInicio}}">
+							</div>
 						</div>
-					</div>
-					<div class="row mt-4 justify-content-center">
-						<div class="col-md-3">
-							<h6 class="ml-5 pt-2">Fecha Inicio:</h6>
+						<div class="row mt-4 justify-content-center">
+							<div class="col-md-3">
+								<h6 class="ml-5 pt-2">Fecha Fin:</h6>
+							</div>
+							<div class="col-md-3">
+								<input type="date" name="fecha_fin" class="form-control" value="{{fechaHoy}}">
+							</div>
 						</div>
-						<div class="col-md-3">
-							<input type="date" name="fecha_inicio" class="form-control" value="{{ fechaHoy }}">
+					
+				</div>
+				<div class="card-footer">
+					<div class="row">
+						<div class="col-md-2 my-1 mx-1">
+							<button type="submit" name="previa" class="btn btn-default">Vista Previa</button>
 						</div>
-					</div>
-					<div class="row mt-4 justify-content-center">
-						<div class="col-md-3">
-							<h6 class="ml-5 pt-2">Fecha Fin:</h6>
+						<div class="col-md-2 my-1 mx-1">
+							<button type="submit" name="descarga" class="btn btn-default">Descargar</button>
 						</div>
-						<div class="col-md-3">
-							<input type="date" name="fecha_fin" class="form-control">
-						</div>
-					</div>
-				</form>
-			</div>
-			<div class="card-footer">
-				<div class="row">
-					<div class="col-md-2 my-1 mx-1">
-						<button class="btn btn-default">Vista Previa</button>
-					</div>
-					<div class="col-md-2 my-1 mx-1">
-						<button class="btn btn-default">Descargar</button>
 					</div>
 				</div>
 			</div>
-		</div>
+		</form>
 	</div>	
+
+	<script type="text/javascript">
+		function descargarPDF(){
+			
+		}
+	</script>
 {% endblock main_content %}

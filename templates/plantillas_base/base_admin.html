@@ -84,7 +84,7 @@
                 </a>
               </li>
             <li class="nav-item">
-            <a class="nav-link" href=#>Aun sin login</a>
+            <a class="nav-link" href=#>{{request.user.username}}</a>
              </li>
              <li class="nav-item">
              <a class="nav-link" href="{% url 'logout' %}">Cerrar Sesión</a>
