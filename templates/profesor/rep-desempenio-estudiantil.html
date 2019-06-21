@@ -9,7 +9,8 @@
 {% endblock subtitulo-reporte %}
 
 {% block contenido-reporte %}
-	<h6><b>Grupo de: XXX</b></h6>
+    {% for grupo in grupos %}
+	<h6>Grupo de: {{ grupo.horario.dias_asignados }} de {{ grupo.horario.hora_inicio }} a {{ grupo.horario.hora_fin }}</h6>
 	<table class="table">
 		<thead>
 			<tr>
@@ -31,5 +32,5 @@
 			</tr>
         </tbody>
 	</table>
-
+    {% endfor %}
 {% endblock contenido-reporte %}

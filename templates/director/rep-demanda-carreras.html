@@ -1,0 +1,28 @@
+{% extends "plantillas_base/base_reporte.html" %}
+
+{% block titulo-reporte %}
+	Reporte de Demanda de Carreras
+{% endblock titulo-reporte %}
+
+{% block subtitulo-reporte %}
+	Generado el {{fechaHoy}}
+{% endblock subtitulo-reporte %}
+
+{% block contenido-reporte %}
+	<table class="table">
+        <thead>
+        <tr>
+            <th>Carrera</th>
+            <th>Cantidad de Alumnos</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for carrera in carreras %}
+            <tr>
+                <td>{{ carrera.nombre_carrera }}</td>
+                <td>{{ carrera.cant_alumnos }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock contenido-reporte %}

@@ -5,12 +5,10 @@ urlpatterns = [
     
 #Entradas
 	url(r'^desempenio_estudiantil/$', views.verDesempenioEstudiantil, name="desempenio_estudiantil"),
-
-
-#Salidas
+	url(r'^inasistencia_estudiantil/$', views.verInasistenciaEstudiantil, name="inasistencia_estudiantil"),
 
 
 #PDFS
-	url(r'^pdf_desempenio_estudiantil/$', views.RepDesempenioEstudiantil.as_view(), name='pdf_desempenio_estudiantil'),
+	url(r'^pdf_desempenio_estudiantil/(?P<grupo>\d{1})$',views.RepDesempenioEstudiantil.as_view(), name='pdf_desempenio_estudiantil'),
 
 ]

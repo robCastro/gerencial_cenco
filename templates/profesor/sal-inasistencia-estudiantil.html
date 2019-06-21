@@ -3,7 +3,7 @@
 {%load staticfiles%}
 
 {% block titulo %}
-	Desempeño Estudiantil
+	Inasistencia Estudiantil
 {% endblock titulo %}
 
 {% block head_content %}
@@ -15,7 +15,7 @@
 		<div class="card">
 			<div class="card-header">
 				<h5 class="title">Reporte de Inasistencia Estudiantil</h5>
-				<p>Generado el {{ fechaHoy }}</p>
+				<p>Generado el {{ fechaHoy }}, desde {{fechaInicio|date:"d/m/Y"}} hasta {{fechaFin|date:"d/m/Y"}}</p>
 			</div>
 			<div class="card-body">
                 {% for grupo in grupos %}
@@ -31,24 +31,28 @@
 								<tr>
 									<th>Nombre</th>
 									<th>Encargado</th>
-									<th>Calificacion</th>
+									<th>Ultima Asistencia</th>
+                                    <th>Cantidad Inasistencias</th>
 								</tr>
 							</thead>
 							<tbody>
 								<tr>
 									<td>xxxxxxxxxxxxx</td>
 									<td>xxxxxxxx</td>
-									<td>99.99</td>
+                                    <td>99/99/9999</td>
+									<td>99</td>
 								</tr>
 								<tr>
 									<td>xxxxxxxxxxxxx</td>
 									<td>xxxxxxxx</td>
-									<td>99.99</td>
+                                    <td>99/99/9999</td>
+									<td>99</td>
 								</tr>
                                 <tr>
 									<td>xxxxxxxxxxxxx</td>
 									<td>xxxxxxxx</td>
-									<td>99.99</td>
+                                    <td>99/99/9999</td>
+									<td>99</td>
 								</tr>
 							</tbody>
 						</table>
@@ -59,7 +63,7 @@
 			<div class="card-footer">
 				<div class="row">
 					<div class="col-md-2 my-1 mx-1">
-						<a href="{% url 'desempenio_estudiantil' %}" class="btn btn-default">Regresar</a>
+						<a href="{% url 'inasistencia_estudiantil' %}" class="btn btn-default">Regresar</a>
 					</div>
 					<div class="col-md-2 my-1 mx-1">
 						<button onclick="descargar()" class="btn btn-default">Descargar</button>

@@ -10,7 +10,7 @@ urlpatterns = [
 	url(r'^ingreso_econ_suc/$', views.verIngresoEconSuc, name="ingreso_econ_suc"),
 	url(r'^desempenio_sucursal/$', views.verDesempenioSucursal, name="desempenio_sucursal"),
 
-
+    url(r'^moras_estudiantiles/$', views.verMorasEstudiantiles, name="moras_estudiantiles"),
 
 	#Salidas
 	url(r'^salida_ingreso_retiros_estudiantes/$',
@@ -24,9 +24,13 @@ urlpatterns = [
 	url(r'^salida_ingreso_econ_suc/$',
 		views.verSalidaIngresoEconSuc,
 		name="sal_ingreso_econ_suc"),
+
+	url(r'^sal_demanda_carreras/$', views.verSalidaDemandaCarreras, name="demanda_carreras"),
 	
 
 	#PDFS
 	url(r'^pdf_ingreso_retiros_estudiantes/(?P<idSucursal>\d{1})/(?P<fechaInicio>\d{4}-\d{2}-\d{2})/(?P<fechaFin>\d{4}-\d{2}-\d{2})/(?P<tipo>\d{1})$', views.RepIngresosRetirosEstudiantes.as_view(), name='pdf_ingreso_retiros_estudiantes'),
 	#url(r'^pdf_ingreso_retiros_estudiantes/$', views.RepIngresosRetirosEstudiantes.as_view(), name='pdf_ingreso_retiros_estudiantes'),
+
+url(r'^pdf_demanda_carreras/$', views.RepDemandaCarreras.as_view(), name='pdf_demanda_carreras'),
 ]

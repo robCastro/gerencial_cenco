@@ -3,7 +3,7 @@
 {%load staticfiles%}
 
 {% block titulo %}
-	Desempeño Estudiantil
+	Moras Estudiantiles
 {% endblock titulo %}
 
 {% block head_content %}
@@ -14,7 +14,7 @@
 	<div class="col-md-12">
 		<div class="card">
 			<div class="card-header">
-				<h5 class="title">Reporte de Inasistencia Estudiantil</h5>
+				<h5 class="title">Reporte de Moras Estudiantiles</h5>
 				<p>Generado el {{ fechaHoy }}</p>
 			</div>
 			<div class="card-body">
@@ -31,23 +31,39 @@
 								<tr>
 									<th>Nombre</th>
 									<th>Encargado</th>
-									<th>Calificacion</th>
+                                    <th>Tel Encargado</th>
+                                    <th>Ult Pago</th>
+                                    <th>Pagado hasta</th>
+                                    <th>Semanas</th>
+									<th>Monto</th>
 								</tr>
 							</thead>
 							<tbody>
 								<tr>
 									<td>xxxxxxxxxxxxx</td>
 									<td>xxxxxxxx</td>
+                                    <td>9999-9999</td>
+                                    <td>99/99/9999</td>
+                                    <td>99/99/9999</td>
+                                    <td>99</td>
 									<td>99.99</td>
 								</tr>
 								<tr>
 									<td>xxxxxxxxxxxxx</td>
 									<td>xxxxxxxx</td>
+                                    <td>9999-9999</td>
+                                    <td>99/99/9999</td>
+                                    <td>99/99/9999</td>
+                                    <td>99</td>
 									<td>99.99</td>
 								</tr>
                                 <tr>
 									<td>xxxxxxxxxxxxx</td>
 									<td>xxxxxxxx</td>
+                                    <td>9999-9999</td>
+                                    <td>99/99/9999</td>
+                                    <td>99/99/9999</td>
+                                    <td>99</td>
 									<td>99.99</td>
 								</tr>
 							</tbody>
@@ -59,7 +75,7 @@
 			<div class="card-footer">
 				<div class="row">
 					<div class="col-md-2 my-1 mx-1">
-						<a href="{% url 'desempenio_estudiantil' %}" class="btn btn-default">Regresar</a>
+						<a href="{% url 'moras_estudiantiles' %}" class="btn btn-default">Regresar</a>
 					</div>
 					<div class="col-md-2 my-1 mx-1">
 						<button onclick="descargar()" class="btn btn-default">Descargar</button>
