@@ -5,131 +5,50 @@
 {% endblock titulo-reporte %}
 
 {% block subtitulo-reporte %}
-	Generado el {{fechaHoy}}, desde 99/99/9999 hasta 99/99/9999.
+	Generado el {{fechaHoy|date:"d/m/Y"}}, desde {{fechaInicio|date:"d/m/Y"}} hasta {{fechaFin|date:"d/m/Y"}}.
 {% endblock subtitulo-reporte %}
 
 {% block contenido-reporte %}
-	<h6><b>INSCRITOS: 9999999 EN TOTAL</b></h6>
-	<table class="table">
-		<thead>
-			<tr>
-				<th>Nombre</th>
-				<th>Fecha de Inscripcion</th>
-				<th>Carrera</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr>
-				<td>xxxxxxxxxxxxx</td>
-				<td>99/99/9999</td>
-				<td>xxxxxxxx</td>
-			</tr>
-			<tr>
-				<td>xxxxxxxxxxxxx</td>
-				<td>99/99/9999</td>
-				<td>xxxxxxxx</td>
-			</tr>
-			<tr>
-				<td>xxxxxxxxxxxxx</td>
-				<td>99/99/9999</td>
-				<td>xxxxxxxx</td>
-			</tr>
-			<tr>
-				<td>xxxxxxxxxxxxx</td>
-				<td>99/99/9999</td>
-				<td>xxxxxxxx</td>
-			</tr>
-			<tr>
-				<td>xxxxxxxxxxxxx</td>
-				<td>99/99/9999</td>
-				<td>xxxxxxxx</td>
-			</tr>
-			<tr>
-				<td>xxxxxxxxxxxxx</td>
-				<td>99/99/9999</td>
-				<td>xxxxxxxx</td>
-			</tr>
-			<tr>
-				<td>xxxxxxxxxxxxx</td>
-				<td>99/99/9999</td>
-				<td>xxxxxxxx</td>
-			</tr>
-			<tr>
-				<td>xxxxxxxxxxxxx</td>
-				<td>99/99/9999</td>
-				<td>xxxxxxxx</td>
-			</tr>
-			<tr>
-				<td>xxxxxxxxxxxxx</td>
-				<td>99/99/9999</td>
-				<td>xxxxxxxx</td>
-			</tr>
-			<tr>
-				<td>xxxxxxxxxxxxx</td>
-				<td>99/99/9999</td>
-				<td>xxxxxxxx</td>
-			</tr>
-	</table>
-	<h6 style="padding-top: 1.5cm;"><b>RETIROS: 9999999 EN TOTAL</b></h6>
-	<table class="table">
-		<thead>
-			<tr>
-				<th>Nombre</th>
-				<th>Fecha de Retiro</th>
-				<th>Carrera</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr>
-				<td>xxxxxxxxxxxxx</td>
-				<td>99/99/9999</td>
-				<td>xxxxxxxx</td>
-			</tr>
-			<tr>
-				<td>xxxxxxxxxxxxx</td>
-				<td>99/99/9999</td>
-				<td>xxxxxxxx</td>
-			</tr>
-			<tr>
-				<td>xxxxxxxxxxxxx</td>
-				<td>99/99/9999</td>
-				<td>xxxxxxxx</td>
-			</tr>
-			<tr>
-				<td>xxxxxxxxxxxxx</td>
-				<td>99/99/9999</td>
-				<td>xxxxxxxx</td>
-			</tr>
-			<tr>
-				<td>xxxxxxxxxxxxx</td>
-				<td>99/99/9999</td>
-				<td>xxxxxxxx</td>
-			</tr>
-			<tr>
-				<td>xxxxxxxxxxxxx</td>
-				<td>99/99/9999</td>
-				<td>xxxxxxxx</td>
-			</tr>
-			<tr>
-				<td>xxxxxxxxxxxxx</td>
-				<td>99/99/9999</td>
-				<td>xxxxxxxx</td>
-			</tr>
-			<tr>
-				<td>xxxxxxxxxxxxx</td>
-				<td>99/99/9999</td>
-				<td>xxxxxxxx</td>
-			</tr>
-			<tr>
-				<td>xxxxxxxxxxxxx</td>
-				<td>99/99/9999</td>
-				<td>xxxxxxxx</td>
-			</tr>
-			<tr>
-				<td>xxxxxxxxxxxxx</td>
-				<td>99/99/9999</td>
-				<td>xxxxxxxx</td>
-			</tr>
-		</tbody>
-	</table>
+	{% if not detalles == None %}
+		<h6><b>INSCRITOS: {{detalles.count}} EN TOTAL</b></h6>
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Nombre</th>
+					<th>Fecha de Inscripcion</th>
+					<th>Carrera</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for detalle in detalles  %}
+					<tr>
+						<td>{{detalle.alumno.nombre}} {{detalle.alumno.apellido}}</td>
+						<td>{{detalle.fecha_detalle_e|date:"d/m/Y"}}</td>
+						<td>{{detalle.alumno.expediente_set.first.carrera.nombre_carrera}}</td>
+					</tr>
+				{% endfor %}
+		</table>
+	{% endif %}
+	
+	{% if not retiros == None  %}
+		<h6 style="padding-top: 1.5cm;"><b>RETIROS: {{retiros.count}} EN TOTAL</b></h6>
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Nombre</th>
+					<th>Fecha de Retiro</th>
+					<th>Carrera</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for retiro in retiros %}
+					<tr>
+						<td>{{retiro.alumno.nombre}} {{retiro.alumno.apellido}}</td>
+						<td>{{retiro.fecha_detalle_e}}</td>
+						<td>{{retiro.alumno.expediente_set.first.carrera.nombre_carrera}}</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% endif %}
 {% endblock contenido-reporte %}

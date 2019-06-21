@@ -144,7 +144,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, '../media')
 
 STATIC_ROOT = os.path.join(BASE_DIR, '../static')
 
-WKHTMLTOPDF_CMD = "C:/Program Files/wkhtmltopdf/bin/wkhtmltopdf.exe"
+#WKHTMLTOPDF_CMD = "C:/Program Files/wkhtmltopdf/bin/wkhtmltopdf.exe"
 
 LOGIN_REDIRECT_URL = '/'
 

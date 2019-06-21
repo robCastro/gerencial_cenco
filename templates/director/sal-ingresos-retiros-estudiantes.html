@@ -15,140 +15,69 @@
 		<div class="card">
 			<div class="card-header">
 				<h5 class="title">Reporte de Inscripciones y Retiro de Estudiantes</h5>
-				<p>Generado el fecha_actual, filtro desde fecha_inicio, fecha_fin</p>
+				<p>Generado el {{fechaHoy|date:"d/m/Y"}}, filtro desde {{fechaInicio|date:"d/m/Y"}} hasta {{fechaFin|date:"d/m/Y"}}</p>
 			</div>
 			<div class="card-body">
-				<div class="row">
-					<div class="col-md-12">
-						<h6>Inscritos: 99999 en total.</h6>
+				{% if not detalles == None %}
+					<div class="row">
+						<div class="col-md-12">
+							<h6>Inscritos: {{detalles.count}} en total.</h6>
+						</div>
 					</div>
-				</div>
-				<div class="row">
-					<div class="table-responsive">
-						<table class="table">
-							<thead>
-								<tr>
-									<th>Nombre</th>
-									<th>Fecha de Inscripcion</th>
-									<th>Carrera</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<td>xxxxxxxxxxxxx</td>
-									<td>99/99/9999</td>
-									<td>xxxxxxxx</td>
-								</tr>
-								<tr>
-									<td>xxxxxxxxxxxxx</td>
-									<td>99/99/9999</td>
-									<td>xxxxxxxx</td>
-								</tr>
-								<tr>
-									<td>xxxxxxxxxxxxx</td>
-									<td>99/99/9999</td>
-									<td>xxxxxxxx</td>
-								</tr>
-								<tr>
-									<td>xxxxxxxxxxxxx</td>
-									<td>99/99/9999</td>
-									<td>xxxxxxxx</td>
-								</tr>
-								<tr>
-									<td>xxxxxxxxxxxxx</td>
-									<td>99/99/9999</td>
-									<td>xxxxxxxx</td>
-								</tr>
-								<tr>
-									<td>xxxxxxxxxxxxx</td>
-									<td>99/99/9999</td>
-									<td>xxxxxxxx</td>
-								</tr>
-								<tr>
-									<td>xxxxxxxxxxxxx</td>
-									<td>99/99/9999</td>
-									<td>xxxxxxxx</td>
-								</tr>
-								<tr>
-									<td>xxxxxxxxxxxxx</td>
-									<td>99/99/9999</td>
-									<td>xxxxxxxx</td>
-								</tr>
-								<tr>
-									<td>xxxxxxxxxxxxx</td>
-									<td>99/99/9999</td>
-									<td>xxxxxxxx</td>
-								</tr>
-							</tbody>
-						</table>
+					<div class="row">
+						<div class="table-responsive">
+							<table class="table">
+								<thead>
+									<tr>
+										<th>Nombre</th>
+										<th>Fecha de Inscripcion</th>
+										<th>Carrera</th>
+									</tr>
+								</thead>
+								<tbody>
+									{% for detalle in detalles %}
+										<tr>
+											<td>{{detalle.alumno.nombre}} {{detalle.alumno.apellido}}</td>
+											<td>{{detalle.fecha_detalle_e|date:"d/m/Y"}}</td>
+											<td>{{detalle.alumno.expediente_set.first.carrera.nombre_carrera}}</td>
+										</tr>
+									{% endfor %}
+									
+								</tbody>
+							</table>
+						</div>
 					</div>
-				</div>
-				<div class="row mt-5">
-					<div class="col-md-12">
-						<h6>Retiros: 99999 en total.</h6>
+				{% endif %}
+				{% if not retiros == None %}
+					<div class="row {% if not detalles == None %}mt-5{% endif %}">
+						<div class="col-md-12">
+							<h6>Retiros: {{retiros.count}} en total.</h6>
+						</div>
 					</div>
-				</div>
-				<div class="row">
-					<div class="table-responsive">
-						<table class="table">
-							<thead>
-								<tr>
-									<th>Nombre</th>
-									<th>Fecha de Retiro</th>
-									<th>Carrera</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<td>xxxxxxxxxxxxx</td>
-									<td>99/99/9999</td>
-									<td>xxxxxxxx</td>
-								</tr>
-								<tr>
-									<td>xxxxxxxxxxxxx</td>
-									<td>99/99/9999</td>
-									<td>xxxxxxxx</td>
-								</tr>
-								<tr>
-									<td>xxxxxxxxxxxxx</td>
-									<td>99/99/9999</td>
-									<td>xxxxxxxx</td>
-								</tr>
-								<tr>
-									<td>xxxxxxxxxxxxx</td>
-									<td>99/99/9999</td>
-									<td>xxxxxxxx</td>
-								</tr>
-								<tr>
-									<td>xxxxxxxxxxxxx</td>
-									<td>99/99/9999</td>
-									<td>xxxxxxxx</td>
-								</tr>
-								<tr>
-									<td>xxxxxxxxxxxxx</td>
-									<td>99/99/9999</td>
-									<td>xxxxxxxx</td>
-								</tr>
-								<tr>
-									<td>xxxxxxxxxxxxx</td>
-									<td>99/99/9999</td>
-									<td>xxxxxxxx</td>
-								</tr>
-								<tr>
-									<td>xxxxxxxxxxxxx</td>
-									<td>99/99/9999</td>
-									<td>xxxxxxxx</td>
-								</tr>
-								<tr>
-									<td>xxxxxxxxxxxxx</td>
-									<td>99/99/9999</td>
-									<td>xxxxxxxx</td>
-								</tr>
-							</tbody>
-						</table>
+					<div class="row">
+						<div class="table-responsive">
+							<table class="table">
+								<thead>
+									<tr>
+										<th>Nombre</th>
+										<th>Fecha de Retiro</th>
+										<th>Carrera</th>
+									</tr>
+								</thead>
+								<tbody>
+									{% for retiro in retiros %}
+										<tr>
+											<td>{{retiro.alumno.nombre}} {{retiro.alumno.apellido}}</td>
+											<td>{{retiro.fecha_detalle_e|date:"d/m/Y"}}</td>
+											<td>{{retiro.alumno.expediente_set.first.carrera.nombre_carrera}}</td>
+										</tr>
+										
+									{% endfor %}
+								</tbody>
+							</table>
+						</div>
 					</div>
-				</div>
-			</div>
+				{% endif %}
 			</div>
 			<div class="card-footer">
 				<div class="row">
@@ -165,8 +94,8 @@
 
 	<script type="text/javascript">
 		function descargar(){
-			//window.location.href = "{% url 'pdf_ingreso_retiros_estudiantes' %}";
-			window.open("{% url 'pdf_ingreso_retiros_estudiantes' %}", '_blank');
+				variable = "{% url 'pdf_ingreso_retiros_estudiantes' sucursal.codigo_sucursal fechaInicio|date:"Y-m-d" fechaFin|date:"Y-m-d" tipo %}";
+				window.open(variable, '_blank');
 		}
 	</script>
 {% endblock main_content %}

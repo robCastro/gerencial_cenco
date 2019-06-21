@@ -26,33 +26,15 @@
 			<div class="card">
 				<div class="card-header">
 					<h5 class="title">Realización de ETL</h5>
-					<p><strong>Atención</strong>, el proceso de actualización de datos presenta una gran carga tanto para el sistema gerencial como para el administrativo, se recomienda realizarlo en las horas cuyo uso sea menor.</p>
+					<p class="text-justify mx-2"><strong>Atención</strong>, el proceso de actualización de datos presenta una gran carga tanto para el sistema gerencial como para el administrativo, se recomienda realizarlo en las horas cuyo uso sea menor.</p>
 				</div>
 				<div class="card-body">
-					<div class="row justify-content-center">
-						<div class="col-md-3">
-							<h6 class="ml-5 pt-2">Fecha Inicio:</h6>
-						</div>
-						<div class="col-md-3">
-							<input type="date" name="fecha_inicio" class="form-control" value="{{ fechaHoy }}">
-						</div>
-					</div>
-					<div class="row mt-4 justify-content-center">
-						<div class="col-md-3">
-							<h6 class="ml-5 pt-2">Fecha Fin:</h6>
-						</div>
-						<div class="col-md-3">
-							<input type="date" name="fecha_fin" class="form-control">
-						</div>
-					</div>
+					<p class="mx-5 text-justify">El <strong>ETL</strong> consiste en la extracción de datos del sistema transaccional e insertarlos en la base de datos gerencial, este proceso supone una gran carga para ambas bases de datos, se recomienda que se realice entre 11 pm y 5 am. Dependiendo de la cantidad de datos, <strong>podría llegar a tomar hasta 5 minutos</strong>.</p>
 				</div>
 				<div class="card-footer">
 					<div class="row mt-4">
 						<div class="col-md-2 my-1 mx-1">
 							<button type="submit" class="btn btn-default">Realizar ETL</button>
-						</div>
-						<div class="col-md-2 my-1 mx-1">
-							<button class="btn btn-default">Descargar</button>
 						</div>
 					</div>
 				</div>
