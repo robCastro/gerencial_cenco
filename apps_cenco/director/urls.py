@@ -7,7 +7,6 @@ urlpatterns = [
 	#Entradas
 	url(r'^ingreso_retiros_estudiantes/$', views.verIngresosRetirosEstudiantes, name="ingreso_retiros_estudiantes"),
 	url(r'^desempenio_didactico/$', views.verDesempenioDidactico, name="desempenio_didactico"),
-	url(r'^ingreso_econ_suc/$', views.verIngresoEconSuc, name="ingreso_econ_suc"),
 	url(r'^desempenio_sucursal/$', views.verDesempenioSucursal, name="desempenio_sucursal"),
 
 
@@ -21,12 +20,8 @@ urlpatterns = [
 		views.verSalidaDesempenioSucursal,
 		name="sal_desempenio_sucursal"),
 
-	url(r'^salida_ingreso_econ_suc/$',
-		views.verSalidaIngresoEconSuc,
-		name="sal_ingreso_econ_suc"),
 	
-
+	
 	#PDFS
 	url(r'^pdf_ingreso_retiros_estudiantes/(?P<idSucursal>\d{1})/(?P<fechaInicio>\d{4}-\d{2}-\d{2})/(?P<fechaFin>\d{4}-\d{2}-\d{2})/(?P<tipo>\d{1})$', views.RepIngresosRetirosEstudiantes.as_view(), name='pdf_ingreso_retiros_estudiantes'),
-	#url(r'^pdf_ingreso_retiros_estudiantes/$', views.RepIngresosRetirosEstudiantes.as_view(), name='pdf_ingreso_retiros_estudiantes'),
 ]

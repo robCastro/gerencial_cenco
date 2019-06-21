@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 from wkhtmltopdf.views import PDFTemplateView
 from django.contrib.auth.decorators import permission_required, login_required
 from django.http import Http404, HttpResponse
-from apps_cenco.db_app.models import Inscripcion, Estado, Empleado, Sucursal
+from apps_cenco.db_app.models import Inscripcion, Estado, Empleado, Sucursal, DetallePago
 from django.views.generic import ListView
 
 ##Entradas
@@ -47,13 +47,6 @@ def verDesempenioSucursal(request):
 	}
 	return render(request, 'director/desempenio-sucursal.html', context)
 
-def verIngresoEconSuc(request):
-	fechaHoy = str((datetime.now().date().strftime("%m/%d/%Y")))
-	context = {
-		'fechaHoy' : fechaHoy,
-	}
-	return render(request, 'director/ingresos-econ-suc.html', context)
-
 
 
 ##Salidas
@@ -86,13 +79,6 @@ def verSalidaDesempenioSucursal(request):
 	}
 	return render(request, 'director/sal-desempenio-sucursal.html', context)
 
-def verSalidaIngresoEconSuc(request):
-	fechaHoy = str((datetime.now().date().strftime("%m/%d/%Y")))
-	context = {
-		'fechaHoy' : fechaHoy,
-	}
-	return render(request, 'director/sal-ingresos-econ-suc.html', context)
-
 
 
 ##Reportes
@@ -120,8 +106,6 @@ class RepIngresosRetirosEstudiantes(PDFTemplateView):
 		if tipo == 2 or tipo == 3:
 			context['retiros'] = consultaIngresosRetirosEstudiantes(fechaInicio, fechaFin, 'Retirados', sucursal)['detalles']
 		return context
-
-
 
 
 
