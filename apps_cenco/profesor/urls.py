@@ -8,7 +8,6 @@ urlpatterns = [
 
 
 #Salidas
-	url(r'^salida_desempenio_estudiantil/$', views.verSalDesempenioEstudiantil, name="sal_desempenio_estudiantil"),
 
 
 #PDFS

@@ -18,9 +18,17 @@
 				<p>Generado el {{ fechaHoy }}</p>
 			</div>
 			<div class="card-body">
+                {% if tipo == 'sup' %}
+                <div class="row">
+					<div class="col-md-12">
+						<h6>Sucursal: CENCO-{{ sucursal.municipio_sucursal }} </h6>
+					</div>
+				</div>
+                {% endif %}
+                {% for grupo in grupos %}
 				<div class="row">
 					<div class="col-md-12">
-						<h6>Grupo de: XXX </h6>
+						<h6>Grupo de: {{ grupo.horario.dias_asignados }} de {{ grupo.horario.hora_inicio }} a {{ grupo.horario.hora_fin }} </h6>
 					</div>
 				</div>
 				<div class="row">
@@ -53,6 +61,7 @@
 						</table>
 					</div>
 				</div>
+                {% endfor %}
 			</div>
 			<div class="card-footer">
 				<div class="row">

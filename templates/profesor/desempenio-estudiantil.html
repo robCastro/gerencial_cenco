@@ -16,17 +16,35 @@
 			<div class="card-header">
 				<h5 class="title">Reporte de Desempeño Estudiantil</h5>
 			</div>
-			<div class="card-body">
-				<form>
+                <form method="post">
 					{% csrf_token %}
-					<div class="row justify-content-center">
+			<div class="card-body">
+                    {% if tipo == 'sup' %}
+                    <div class="row justify-content-center">
+						<div class="col-md-3">
+							<h6 class="ml-5 pt-2">Sucursal:</h6>
+						</div>
+						<div class="col-md-3">
+
+							<select class="form-control" name="sucursal">
+                                {% for sucursal in sucursales %}
+								    <option value="{{ sucursal.codigo_sucursal }}">CENCO-{{ sucursal.municipio_sucursal }}</option>
+                                {% endfor %}
+							</select>
+						</div>
+					</div>
+                    {% endif %}
+					<div {% if tipo == 'sup' %} class="row mt-4 justify-content-center" {% endif %} {% if tipo == 'prof' %} class="row justify-content-center" {% endif %}>
 						<div class="col-md-3">
 							<h6 class="ml-5 pt-2">Grupo:</h6>
 						</div>
 						<div class="col-md-3">
 							
-							<select class="form-control">
-								<option>Todos</option>
+							<select class="form-control" name="grupo">
+                                <option value="todos">Todos</option>
+                                {% for grupo in grupos %}
+								    <option value="{{ grupo.codigo }}">{{ grupo.horario.dias_asignados }} de {{ grupo.horario.hora_inicio }} a {{ grupo.horario.hora_fin }} ({{ grupo.codigo }})</option>
+                                {% endfor %}
 							</select>
 						</div>
 					</div>
@@ -36,10 +54,10 @@
 						</div>
 						<div class="col-md-3">
 
-							<select class="form-control">
-								<option>Mejores</option>
-								<option>Peores</option>
-								<option>Todos</option>
+							<select class="form-control" name="desempenio">
+								<option value="todos">Todos</option>
+                                <option value="mejores">Mejores</option>
+								<option value="peores">Peores</option>
 							</select>
 						</div>
 					</div>
@@ -51,18 +69,18 @@
 							<input type="text" name="cantidad" class="form-control">
 						</div>
 					</div>
-				</form>
 			</div>
 			<div class="card-footer">
 				<div class="row">
 					<div class="col-md-2 my-1 mx-1">
-						<button class="btn btn-default">Vista Previa</button>
+						<button type="submit" class="btn btn-default" id="vistaPrevia" name="vistaPrevia">Vista Previa</button>
 					</div>
 					<div class="col-md-2 my-1 mx-1">
 						<button class="btn btn-default">Descargar</button>
 					</div>
 				</div>
 			</div>
+                </form>
 		</div>
 	</div>	
 {% endblock main_content %}

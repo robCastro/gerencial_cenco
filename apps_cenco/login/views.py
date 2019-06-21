@@ -22,10 +22,10 @@ def principal(request):
             return redirect('ingreso_retiros_estudiantes')
 
         elif has_group(request.user, 'Profesor'):
-            return redirect('')
+            return redirect('desempenio_estudiantil')
 
         elif has_group(request.user, 'Supervisor'):
-            return redirect('')
+            return redirect('desempenio_estudiantil')
 
     else:
         return redirect('login')
