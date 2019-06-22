@@ -77,6 +77,18 @@ def verSalidaIngreSalEstudiantesSuc(request):
 	}
 	return render(request, 'supervisor/sal-ingre-ret-estudiantes-suc.html', context)
 
+def verSalidaDemandaCarrerasSuc(request):
+	fechaHoy = datetime.now().date()
+	sucursales = consultaDemandaCarreras()
+
+	for sucursal in sucursales:
+		print sucursal
+	context = {
+		'fechaHoy' : fechaHoy,
+		'sucursales': sucursales,
+	}
+	return render(request, 'supervisor/sal-demanda-carreras.html', context)
+
 
 
 
@@ -111,6 +123,18 @@ class RepIngRetEstSucursal(PDFTemplateView):
 		context['sucursales'] = consultaInsRetEstuSuc(fechaInicio, fechaFin)
 		return context
 
+class RepDemandaCarrerasSuc(PDFTemplateView):
+	filename = 'Reporte_Demanda_Suc.pdf'
+	template_name = 'supervisor/rep-demanda-carreras.html'
+	show_content_in_browser=True ###Para no descargar automaticamente
+	###Para agregar context manuales
+	def get_context_data(self, **kwargs):
+		context = super(RepDemandaCarrerasSuc, self).get_context_data(**kwargs)
+		context['fechaHoy'] = datetime.now().date()
+		context['sucursales'] = consultaDemandaCarreras()
+		return context
+
+
 
 
 ##Consultas Aux
@@ -141,3 +165,32 @@ def consultaInsRetEstuSuc(fechaInicio, fechaFin):
 			order by inscritos desc
 		""".format(datetime.strftime(fechaInicio,'%Y-%m-%d'), datetime.strftime(fechaFin, '%Y-%m-%d')))
 		return cursorSG.fetchall()
+
+
+def consultaDemandaCarreras():
+	sucursales =Sucursal.objects.all()
+	suc_list = []
+	for suc in sucursales:
+		with connections['default'].cursor() as cursorSG:
+			cursorSG.execute("""
+				select T1.municipio_sucursal, T1.telefono_sucursal, T1.direccion_sucursal, T1.nombre_carrera, maxi, T2.nombre_carrera, mini from
+				(select municipio_sucursal, telefono_sucursal, direccion_sucursal, nombre_carrera, count(codigo_carrera) as maxi
+				from db_app_sucursal INNER JOIN  db_app_carrera ON codigo_sucursal=sucursal_id 
+				INNER JOIN db_app_expediente ON codigo_carrera=carrera_id INNER JOIN db_app_alumno
+				ON alumno_id=codigo
+				where codigo_sucursal='{}'
+				group by municipio_sucursal, telefono_sucursal, direccion_sucursal,nombre_carrera
+				order by maxi desc limit 1) T1
+				inner JOIN
+				(select municipio_sucursal,nombre_carrera, count(codigo_carrera) as mini
+				from db_app_sucursal INNER JOIN  db_app_carrera ON codigo_sucursal=sucursal_id 
+				INNER JOIN db_app_expediente ON codigo_carrera=carrera_id INNER JOIN db_app_alumno
+				ON alumno_id=codigo
+				where codigo_sucursal='{}'
+				group by municipio_sucursal, telefono_sucursal, direccion_sucursal,nombre_carrera
+				order by mini limit 1) T2 on T1.municipio_sucursal = T2.municipio_sucursal
+				""".format(str(suc.codigo_sucursal),str(suc.codigo_sucursal)))
+			for cur in cursorSG.fetchall():
+				suc_list.append(cur)
+
+	return suc_list
