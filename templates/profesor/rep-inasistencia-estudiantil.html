@@ -1,0 +1,37 @@
+{% extends "plantillas_base/base_reporte.html" %}
+
+{% block titulo-reporte %}
+	Reporte de Inasistencia Estudiantil
+{% endblock titulo-reporte %}
+
+{% block subtitulo-reporte %}
+	Generado el {{fechaHoy}}, desde {{fechaInicio|date:"d/m/Y"}} hasta {{fechaFin|date:"d/m/Y"}}
+{% endblock subtitulo-reporte %}
+
+{% block contenido-reporte %}
+    {% for grupo in grupos %}
+	<h6>Grupo de: {{ grupo.horario.dias_asignados }} de {{ grupo.horario.hora_inicio }} a {{ grupo.horario.hora_fin }}</h6>
+	<table class="table">
+		<thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Encargado</th>
+            <th>Ultima Asistencia</th>
+            <th>Cantidad Inasistencias</th>
+        </tr>
+        </thead>
+		<tbody>
+        {% for alumno in alumnos %}
+            {% if alumno.grupo_id == grupo.codigo %}
+                <tr>
+                    <td>{{ alumno.nombre }} {{ alumno.apellido }}</td>
+                    <td>{{ alumno.encargado.nombre }} {{ alumno.encargado.apellido }}</td>
+                    <td>{{ alumno.ult_asi|date:"d/m/Y" }}</td>
+                    <td>{{ alumno.cant_ina }}</td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+        </tbody>
+	</table>
+    {% endfor %}
+{% endblock contenido-reporte %}

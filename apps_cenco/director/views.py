@@ -67,12 +67,7 @@ def verMorasEstudiantiles(request):
 				cantidad = request.POST.get('cantidad')
 				return redirect('pdf_desempenio_estudiantil', grupo)
 		else:
-			grupos = Grupo.objects.raw(
-				"SELECT gr.codigo FROM db_app_grupo as gr join db_app_empleado as em on gr.profesor_id=em.codigo "
-				"join db_app_sucursal as s on s.codigo_sucursal=em.sucursal_id "
-				"where gr.activo_grupo=True and em.sucursal_id="+ str(sucursal.codigo_sucursal)+
-				"order by gr.codigo"
-			)
+			grupos = consultaGruposSucursal(sucursal)['grupos']
 			context = {
 				'grupos': grupos,
 			}
@@ -124,12 +119,7 @@ def verSalidaMorasEstudiantiles(request):
 		grupo = int(request.POST.get('grupo'))
 		cantidad = request.POST.get('cantidad')
 		if grupo == 0:
-			grupos=Grupo.objects.raw(
-				"SELECT gr.codigo FROM db_app_grupo as gr join db_app_empleado as em on gr.profesor_id=em.codigo "
-				"join db_app_sucursal as s on s.codigo_sucursal=em.sucursal_id "
-				"where gr.activo_grupo=True and em.sucursal_id=" + str(sucursal.codigo_sucursal) +
-				"order by gr.codigo"
-			)
+			grupos = consultaGruposSucursal(sucursal)['grupos']
 		else:
 			grupos = Grupo.objects.filter(codigo=grupo).order_by('codigo')
 		context = {
@@ -144,14 +134,7 @@ def verSalidaDemandaCarreras(request):
 	if request.user.groups.filter(name="Director").exists():
 		sucursal = Empleado.objects.get(username=request.user).sucursal
 		fechaHoy = str((datetime.now().date().strftime("%d/%m/%Y")))
-		carreras=Carrera.objects.raw(
-			"SELECT ca.codigo_carrera, count(e.alumno_id) as cant_alumnos "
-			"FROM db_app_carrera as ca join db_app_sucursal as s on ca.sucursal_id=s.codigo_sucursal "
-			"join db_app_expediente as e on ca.codigo_carrera=e.carrera_id "
-			"where ca.activo_carrera=True and e.activo_expediente=True and s.codigo_sucursal=" + str(sucursal.codigo_sucursal) +
-			" group by ca.codigo_carrera "
-			"order by cant_alumnos desc"
-		)
+		carreras = consultaDemandaCarreras(sucursal)['carreras']
 		context = {
 			'fechaHoy': fechaHoy,
 			'carreras': carreras,
@@ -199,15 +182,7 @@ class RepDemandaCarreras(PDFTemplateView):
 		context = super(RepDemandaCarreras, self).get_context_data(**kwargs)
 		context['fechaHoy'] = str((datetime.now().date().strftime("%d/%m/%Y")))
 		sucursal = Empleado.objects.get(username=self.request.user).sucursal
-		carreras = Carrera.objects.raw(
-			"SELECT ca.codigo_carrera, count(e.alumno_id) as cant_alumnos "
-			"FROM db_app_carrera as ca join db_app_sucursal as s on ca.sucursal_id=s.codigo_sucursal "
-			"join db_app_expediente as e on ca.codigo_carrera=e.carrera_id "
-			"where ca.activo_carrera=True and e.activo_expediente=True and s.codigo_sucursal=" + str(
-				sucursal.codigo_sucursal) +
-			" group by ca.codigo_carrera "
-			"order by cant_alumnos desc"
-		)
+		carreras = consultaDemandaCarreras(sucursal)['carreras']
 		context['carreras'] = carreras
 		return context
 
@@ -220,6 +195,32 @@ def consultaIngresosRetirosEstudiantes(fechaInicio, fechaFin, tipo_estado, sucur
 	detalles = estado.detalleestado_set.filter(fecha_detalle_e__range=(fechaInicio, fechaFin), alumno__sucursal = sucursal)
 	context = {
 		'detalles' : detalles
+	}
+	return context
+
+def consultaDemandaCarreras(sucursal):
+	carreras = Carrera.objects.raw(
+		"SELECT ca.codigo_carrera, count(e.alumno_id) as cant_alumnos "
+		"FROM db_app_carrera as ca join db_app_sucursal as s on ca.sucursal_id=s.codigo_sucursal "
+		"join db_app_expediente as e on ca.codigo_carrera=e.carrera_id "
+		"where ca.activo_carrera=True and e.activo_expediente=True and s.codigo_sucursal=" + str(sucursal.codigo_sucursal) +
+		" group by ca.codigo_carrera "
+		"order by cant_alumnos desc"
+	)
+	context = {
+		'carreras' : carreras
+	}
+	return context
+
+def consultaGruposSucursal(sucursal):
+	grupos = Grupo.objects.raw(
+		"SELECT gr.codigo FROM db_app_grupo as gr join db_app_empleado as em on gr.profesor_id=em.codigo "
+		"join db_app_sucursal as s on s.codigo_sucursal=em.sucursal_id "
+		"where gr.activo_grupo=True and em.sucursal_id=" + str(sucursal.codigo_sucursal) +
+		"order by gr.codigo"
+	)
+	context = {
+		'grupos' : grupos
 	}
 	return context
 
