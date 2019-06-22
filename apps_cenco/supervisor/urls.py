@@ -15,6 +15,9 @@ urlpatterns = [
 	url(r'^salida_demanda_carreras/$',
 		views.verSalidaDemandaCarrerasSuc,
 		name="salida_demanda_carreras"),
+	url(r'^salida_empleados_sucursal/$',
+		views.verSalidaEmpleadosSuc,
+		name="salida_empleados_sucursal"),
 
 	#PDFS
 	url(r'^pdf_ingreso_econ_suc/(?P<fechaInicio>\d{4}-\d{2}-\d{2})/(?P<fechaFin>\d{4}-\d{2}-\d{2})$', 
@@ -26,4 +29,7 @@ urlpatterns = [
 	url(r'^pdf_demanda_carreras/$',
 		views.RepDemandaCarrerasSuc.as_view(),
 		name='pdf_demanda_carreras'),
+	url(r'^pdf_empleados_suc/$',
+		views.RepEmpleadosSuc.as_view(),
+		name='pdf_empleados_suc'),
 ]

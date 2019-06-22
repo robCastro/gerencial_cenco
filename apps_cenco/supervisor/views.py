@@ -89,6 +89,15 @@ def verSalidaDemandaCarrerasSuc(request):
 	}
 	return render(request, 'supervisor/sal-demanda-carreras.html', context)
 
+def verSalidaEmpleadosSuc(request):
+	fechaHoy = datetime.now().date()
+	sucursales = consultaEmpleadosSuc()
+	context = {
+		'fechaHoy' : fechaHoy,
+		'sucursales': sucursales,
+	}
+	return render(request, 'supervisor/sal-empleados-sucursal.html', context)
+
 
 
 
@@ -132,6 +141,17 @@ class RepDemandaCarrerasSuc(PDFTemplateView):
 		context = super(RepDemandaCarrerasSuc, self).get_context_data(**kwargs)
 		context['fechaHoy'] = datetime.now().date()
 		context['sucursales'] = consultaDemandaCarreras()
+		return context
+
+class RepEmpleadosSuc(PDFTemplateView):
+	filename = 'Reporte_Empleados_Suc.pdf'
+	template_name = 'supervisor/rep-empleados-sucursal.html'
+	show_content_in_browser=True ###Para no descargar automaticamente
+	###Para agregar context manuales
+	def get_context_data(self, **kwargs):
+		context = super(RepEmpleadosSuc, self).get_context_data(**kwargs)
+		context['fechaHoy'] = datetime.now().date()
+		context['sucursales'] = consultaEmpleadosSuc()
 		return context
 
 
@@ -194,3 +214,16 @@ def consultaDemandaCarreras():
 				suc_list.append(cur)
 
 	return suc_list
+
+def consultaEmpleadosSuc():
+	with connections['default'].cursor() as cursorSG:
+		cursorSG.execute("""
+			select T1.municipio_sucursal, T1.telefono_sucursal, T1.direccion_sucursal, T2.nombre, T1.cant from
+			(select municipio_sucursal, telefono_sucursal, direccion_sucursal, codigo_sucursal, count(sucursal_id) as cant
+			from db_app_sucursal INNER JOIN  db_app_empleado ON codigo_sucursal=sucursal_id 
+			group by municipio_sucursal, telefono_sucursal, direccion_sucursal, codigo_sucursal
+			order by cant desc)T1
+			INNER JOIN
+			(select sucursal_id, nombre from db_app_empleado where tipo='Dir')T2 on T1.codigo_sucursal=T2.sucursal_id
+		""")
+		return cursorSG.fetchall()

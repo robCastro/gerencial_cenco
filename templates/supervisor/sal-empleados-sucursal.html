@@ -3,7 +3,7 @@
 {%load staticfiles%}
 
 {% block titulo %}
-    Demanda de Carreras por Sucursal
+    Cantidad de empleados por sucursal
 {% endblock titulo %}
 
 {% block head_content %}
@@ -15,7 +15,7 @@
         <div class="card">
             <div class="card-header">
                 <h5 class="title" align="center">Centro de Enseñanza en Computación</h5>
-                <h5 class="title" align="center">Reporte de Demanda de Carreras por Sucursal</h5>
+                <h5 class="title" align="center">Reporte de Empleados por Sucursal</h5>
                 <p align="center">Generado el {{fechaHoy|date:"d/m/Y"}}</p>
             </div>
             <div class="card-body">
@@ -27,10 +27,8 @@
                                 <th>Sucursal</th>
                                 <th>Telefono</th>
                                 <th>Direccion</th>
-                                <th>Carrera más solicitada</th>
-                                <th>Alumnos</th>
-                                <th>Carrera menos solicitada</th>
-                                <th>Alumnos</th>
+                                <th>Director</th>
+                                <th>Total de Empleados</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -59,7 +57,7 @@
 
     <script type="text/javascript">
         function descargar(){
-            window.open("{% url 'pdf_demanda_carreras'%}", "_blank")
+            window.open("{% url 'pdf_empleados_suc'%}", "_blank")
         }
     </script>
 {% endblock main_content %}
