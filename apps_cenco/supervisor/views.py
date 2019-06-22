@@ -27,6 +27,22 @@ def verIngresoEconSuc(request):
 	}
 	return render(request, 'supervisor/ingresos-econ-suc.html', context)
 
+def verIngrRetiEstudiantesSuc(request):
+	if request.method == 'POST':
+		if request.POST.get('previa') == '':
+			return verSalidaIngreSalEstudiantesSuc(request)
+		else:
+			fechaInicio = request.POST.get('fecha_inicio')
+			fechaFin = request.POST.get('fecha_fin')
+			return redirect('pdf_ing_ret_estu_su', fechaInicio, fechaFin)
+	fechaHoy = datetime.now().date()
+	fechaInicio = fechaHoy - timedelta(days = 30)
+	context = {
+		'fechaHoy' : fechaHoy,
+		'fechaInicio' : fechaInicio,
+	}
+	return render(request, 'supervisor/ingre-ret-estudiantes-suc.html', context)
+
 
 
 
@@ -45,6 +61,21 @@ def verSalidaIngresoEconSuc(request):
 		'sucursales': sucursales,
 	}
 	return render(request, 'supervisor/sal-ingresos-econ-suc.html', context)
+
+def verSalidaIngreSalEstudiantesSuc(request):
+	fechaHoy = datetime.now().date()
+	fechaInicio = datetime.strptime(request.POST.get('fecha_inicio'), '%Y-%m-%d')
+	fechaFin = datetime.strptime(request.POST.get('fecha_fin'), '%Y-%m-%d')
+	sucursales = consultaInsRetEstuSuc(fechaInicio, fechaFin)
+	for sucursal in sucursales:
+		print sucursal[0]
+	context = {
+		'fechaHoy' : fechaHoy,
+		'fechaInicio': fechaInicio,
+		'fechaFin': fechaFin,
+		'sucursales': sucursales,
+	}
+	return render(request, 'supervisor/sal-ingre-ret-estudiantes-suc.html', context)
 
 
 
@@ -65,6 +96,21 @@ class RepIngresosEconSucursal(PDFTemplateView):
 		context['sucursales'] = consultaDetallesDePago(fechaInicio, fechaFin)
 		return context
 
+class RepIngRetEstSucursal(PDFTemplateView):
+	filename = 'Reporte_Ingresos_Retiros_Suc.pdf'
+	template_name = 'supervisor/rep-ing-ret-est-suc.html'
+	show_content_in_browser=True ###Para no descargar automaticamente
+	###Para agregar context manuales
+	def get_context_data(self, **kwargs):
+		context = super(RepIngRetEstSucursal, self).get_context_data(**kwargs)
+		fechaInicio = datetime.strptime(self.kwargs['fechaInicio'], '%Y-%m-%d')
+		fechaFin = datetime.strptime(self.kwargs['fechaFin'], '%Y-%m-%d')
+		context['fechaHoy'] = datetime.now().date()
+		context['fechaInicio'] = fechaInicio
+		context['fechaFin'] = fechaFin
+		context['sucursales'] = consultaInsRetEstuSuc(fechaInicio, fechaFin)
+		return context
+
 
 
 ##Consultas Aux
@@ -79,5 +125,19 @@ def consultaDetallesDePago(fechaInicio, fechaFin):
 			inner join db_app_sucursal su on al.sucursal_id = su.codigo_sucursal
 			where cancelado = true and fecha_pago between '{}' and '{}'
 			group by municipio_sucursal, telefono_sucursal, direccion_sucursal
+		""".format(datetime.strftime(fechaInicio,'%Y-%m-%d'), datetime.strftime(fechaFin, '%Y-%m-%d')))
+		return cursorSG.fetchall()
+
+def consultaInsRetEstuSuc(fechaInicio, fechaFin):
+	with connections['default'].cursor() as cursorSG:
+		cursorSG.execute("""
+			select municipio_sucursal, telefono_sucursal, direccion_sucursal,
+    		sum(case when estado_id = 2 then 1 else 0 end) as inscritos,
+    		sum(case when estado_id = 8 then 1 else 0 end) as retirados
+			from db_app_sucursal INNER JOIN  db_app_alumno ON codigo_sucursal=sucursal_id 
+			INNER JOIN db_app_detalleestado ON codigo=alumno_id 
+			where fecha_detalle_e between '{}' and '{}'
+			group by municipio_sucursal, telefono_sucursal, direccion_sucursal
+			order by inscritos desc
 		""".format(datetime.strftime(fechaInicio,'%Y-%m-%d'), datetime.strftime(fechaFin, '%Y-%m-%d')))
 		return cursorSG.fetchall()

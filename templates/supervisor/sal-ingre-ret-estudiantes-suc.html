@@ -1,0 +1,66 @@
+{%extends 'plantillas_base/base_director.html'%}
+
+{%load staticfiles%}
+
+{% block titulo %}
+    Ingresos y Retiros de Estudiantes por Sucursal
+{% endblock titulo %}
+
+{% block head_content %}
+
+{% endblock head_content %}
+
+{% block main_content %}
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="title" align="center">Centro de Enseñanza en Computación</h5>
+                <h5 class="title" align="center">Reporte de Inscripción y Retiros Estduantiles de Sucursal</h5>
+                <p align="center">Generado el {{fechaHoy|date:"d/m/Y"}}, Filtro desde {{fechaInicio|date:"d/m/Y"}} hasta {{fechaFin|date:"d/m/Y"}}</p>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="table-responsive">
+                        <table class="table" style="text-align:center">
+                            <thead>
+                            <tr>
+                                <th>Sucursal</th>
+                                <th>Telefono</th>
+                                <th>Direccion</th>
+                                <th>Inscripciones</th>
+                                <th>Retiros</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for sucursal in sucursales %}
+                                <tr>
+                                    {% for elemento_sucursal in sucursal %}
+                                        <td>{{elemento_sucursal}}</td>
+                                    {% endfor %}
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <div class="row">
+                <div class="col-md-2 my-1 mx-1">
+                    <button class="btn btn-default">Regresar</button>
+                </div>
+                <div class="col-md-2 my-1 mx-1">
+                    <button type="button" onclick="descargar()" class="btn btn-default">Descargar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <script type="text/javascript">
+        function descargar(){
+            window.open("{% url 'pdf_ing_ret_estu_su' fechaInicio|date:"Y-m-d" fechaFin|date:"Y-m-d" %}", "_blank")
+        }
+    </script>
+{% endblock main_content %}
