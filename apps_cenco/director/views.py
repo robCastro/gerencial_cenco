@@ -107,7 +107,7 @@ class RepIngresosRetirosEstudiantes(PDFTemplateView):
 
 class RepDesempenioProfesores(PDFTemplateView):
 	filename = 'Reporte_Estudiantes.pdf'
-	template_name = 'director/rep-ingresos-retiros-estudiantes.html'
+	template_name = 'director/rep-desempenio-didactico.html'
 	show_content_in_browser=True
 	def get_context_data(self, **kwargs):
 		context = super(RepDesempenioProfesores, self).get_context_data(**kwargs)
