@@ -34,41 +34,48 @@ def verIngresosRetirosEstudiantes(request):
 	else:
 		raise Http404('Error, no tiene permiso para esta página')
 
+@login_required
 def verDesempenioDidactico(request):	#Salida Incluida
-	fechaHoy = datetime.now().date()
-	sucursal = Empleado.objects.get(username = request.user).sucursal
-	profesores = consultaDesempenioProfesores(sucursal)
-	context = {
-		'fechaHoy' : fechaHoy,
-		'sucursal' : sucursal,
-		'profesores': profesores,
-	}
-	return render(request, 'director/desempenio-didactico.html', context)
-
+	if request.user.groups.filter(name="Director").exists():
+		fechaHoy = datetime.now().date()
+		sucursal = Empleado.objects.get(username = request.user).sucursal
+		profesores = consultaDesempenioProfesores(sucursal)
+		context = {
+			'fechaHoy' : fechaHoy,
+			'sucursal' : sucursal,
+			'profesores': profesores,
+		}
+		return render(request, 'director/desempenio-didactico.html', context)
+	else:
+		raise Http404('Error, no tiene permiso para esta página')
 
 
 ##Salidas
+@login_required
 def verSalidaIngresosRetirosEstudiantes(request):
-	if request.method == 'POST':
-		fechaHoy = datetime.now().date()
-		detalles = None
-		retiros = None
-		tipo = int(request.POST.get('tipo'))
-		sucursal = Empleado.objects.get(username = request.user).sucursal
-		if tipo == 1 or tipo == 3:
-			detalles = consultaIngresosRetirosEstudiantes(request.POST.get('fecha_inicio'), request.POST.get('fecha_fin'), 'Inscrito', sucursal)['detalles']
-		if tipo == 2 or tipo == 3:
-			retiros = consultaIngresosRetirosEstudiantes(request.POST.get('fecha_inicio'), request.POST.get('fecha_fin'), 'Retirados', sucursal)['detalles']
-		context = {
-			'fechaHoy' : fechaHoy,
-			'fechaInicio' : datetime.strptime(request.POST.get('fecha_inicio'), "%Y-%m-%d"),
-			'fechaFin' : datetime.strptime(request.POST.get('fecha_fin'), "%Y-%m-%d"),
-			'tipo' : tipo,
-			'sucursal' : sucursal,
-			'detalles' : detalles,
-			'retiros' : retiros
-		}
-		return render(request, 'director/sal-ingresos-retiros-estudiantes.html', context)
+	if request.user.groups.filter(name="Director").exists():
+		if request.method == 'POST':
+			fechaHoy = datetime.now().date()
+			detalles = None
+			retiros = None
+			tipo = int(request.POST.get('tipo'))
+			sucursal = Empleado.objects.get(username = request.user).sucursal
+			if tipo == 1 or tipo == 3:
+				detalles = consultaIngresosRetirosEstudiantes(request.POST.get('fecha_inicio'), request.POST.get('fecha_fin'), 'Inscrito', sucursal)['detalles']
+			if tipo == 2 or tipo == 3:
+				retiros = consultaIngresosRetirosEstudiantes(request.POST.get('fecha_inicio'), request.POST.get('fecha_fin'), 'Retirados', sucursal)['detalles']
+			context = {
+				'fechaHoy' : fechaHoy,
+				'fechaInicio' : datetime.strptime(request.POST.get('fecha_inicio'), "%Y-%m-%d"),
+				'fechaFin' : datetime.strptime(request.POST.get('fecha_fin'), "%Y-%m-%d"),
+				'tipo' : tipo,
+				'sucursal' : sucursal,
+				'detalles' : detalles,
+				'retiros' : retiros
+			}
+			return render(request, 'director/sal-ingresos-retiros-estudiantes.html', context)
+	else:
+		raise Http404('Error, no tiene permiso para esta página')
 
 
 

@@ -11,66 +11,82 @@ from apps_cenco.db_app.models import Sucursal
 from django.db import connections
 
 ## Entradas
+@login_required
 def verIngresoEconSuc(request):
-	if request.method == 'POST':
-		if request.POST.get('previa') == '':
-			return verSalidaIngresoEconSuc(request)
-		else:
-			fechaInicio = request.POST.get('fecha_inicio')
-			fechaFin = request.POST.get('fecha_fin')
-			return redirect('pdf_ingreso_econ_suc', fechaInicio, fechaFin)
-	fechaHoy = datetime.now().date()
-	fechaInicio = fechaHoy - timedelta(days = 30)
-	context = {
-		'fechaHoy' : fechaHoy,
-		'fechaInicio' : fechaInicio,
-	}
-	return render(request, 'supervisor/ingresos-econ-suc.html', context)
+	if request.user.groups.filter(name="Supervisor").exists():
+		if request.method == 'POST':
+			if request.POST.get('previa') == '':
+				return verSalidaIngresoEconSuc(request)
+			else:
+				fechaInicio = request.POST.get('fecha_inicio')
+				fechaFin = request.POST.get('fecha_fin')
+				return redirect('pdf_ingreso_econ_suc', fechaInicio, fechaFin)
+		fechaHoy = datetime.now().date()
+		fechaInicio = fechaHoy - timedelta(days = 30)
+		context = {
+			'fechaHoy' : fechaHoy,
+			'fechaInicio' : fechaInicio,
+		}
+		return render(request, 'supervisor/ingresos-econ-suc.html', context)
+	else:
+		raise Http404('Error, no tiene permiso para esta página')
 
+@login_required
 def verDesempenioSucursal(request):
-	if request.method == 'POST':
-		if request.POST.get('previa') == '':
-			return verSalidaDesempenioSucursal(request)
-		else:
-			return redirect('pdf_ingreso_econ_suc', request.POST.get('fecha_inicio'), request.POST.get('fecha_fin'))
-	fechaHoy = datetime.now().date()
-	fechaInicio = fechaHoy - timedelta(days = 30)
-	context = {
-		'fechaHoy' : fechaHoy,
-		'fechaInicio': fechaInicio,
-	}
-	return render(request, 'supervisor/desempenio-sucursal.html', context)
+	if request.user.groups.filter(name="Supervisor").exists():
+		if request.method == 'POST':
+			if request.POST.get('previa') == '':
+				return verSalidaDesempenioSucursal(request)
+			else:
+				return redirect('pdf_ingreso_econ_suc', request.POST.get('fecha_inicio'), request.POST.get('fecha_fin'))
+		fechaHoy = datetime.now().date()
+		fechaInicio = fechaHoy - timedelta(days = 30)
+		context = {
+			'fechaHoy' : fechaHoy,
+			'fechaInicio': fechaInicio,
+		}
+		return render(request, 'supervisor/desempenio-sucursal.html', context)
+	else:
+		raise Http404('Error, no tiene permiso para esta página')
 
 
 
 ## Salidas
+@login_required
 def verSalidaIngresoEconSuc(request):
-	fechaHoy = datetime.now().date()
-	fechaInicio = datetime.strptime(request.POST.get('fecha_inicio'), '%Y-%m-%d')
-	fechaFin = datetime.strptime(request.POST.get('fecha_fin'), '%Y-%m-%d')
-	sucursales = consultaDetallesDePago(fechaInicio, fechaFin)
-	for sucursal in sucursales:
-		print sucursal[0]
-	context = {
-		'fechaHoy' : fechaHoy,
-		'fechaInicio': fechaInicio,
-		'fechaFin': fechaFin,
-		'sucursales': sucursales,
-	}
-	return render(request, 'supervisor/sal-ingresos-econ-suc.html', context)
+	if request.user.groups.filter(name="Supervisor").exists():
+		fechaHoy = datetime.now().date()
+		fechaInicio = datetime.strptime(request.POST.get('fecha_inicio'), '%Y-%m-%d')
+		fechaFin = datetime.strptime(request.POST.get('fecha_fin'), '%Y-%m-%d')
+		sucursales = consultaDetallesDePago(fechaInicio, fechaFin)
+		for sucursal in sucursales:
+			print sucursal[0]
+		context = {
+			'fechaHoy' : fechaHoy,
+			'fechaInicio': fechaInicio,
+			'fechaFin': fechaFin,
+			'sucursales': sucursales,
+		}
+		return render(request, 'supervisor/sal-ingresos-econ-suc.html', context)
+	else:
+		raise Http404('Error, no tiene permiso para esta página')
 
+@login_required
 def verSalidaDesempenioSucursal(request):
-	fechaHoy = datetime.now().date()
-	fechaInicio = datetime.strptime(request.POST.get('fecha_inicio'), '%Y-%m-%d')
-	fechaFin = datetime.strptime(request.POST.get('fecha_fin'), '%Y-%m-%d')
-	sucursales = consultaDesempenioSucursal(fechaInicio, fechaFin)
-	context = {
-		'fechaHoy' : fechaHoy,
-		'fechaInicio': fechaInicio,
-		'fechaFin': fechaFin,
-		'sucursales': sucursales,
-	}
-	return render(request, 'supervisor/sal-desempenio-sucursal.html', context)
+	if request.user.groups.filter(name="Supervisor").exists():
+		fechaHoy = datetime.now().date()
+		fechaInicio = datetime.strptime(request.POST.get('fecha_inicio'), '%Y-%m-%d')
+		fechaFin = datetime.strptime(request.POST.get('fecha_fin'), '%Y-%m-%d')
+		sucursales = consultaDesempenioSucursal(fechaInicio, fechaFin)
+		context = {
+			'fechaHoy' : fechaHoy,
+			'fechaInicio': fechaInicio,
+			'fechaFin': fechaFin,
+			'sucursales': sucursales,
+		}
+		return render(request, 'supervisor/sal-desempenio-sucursal.html', context)
+	else:
+		raise Http404('Error, no tiene permiso para esta página')
 
 
 
