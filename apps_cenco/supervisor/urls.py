@@ -29,7 +29,7 @@ urlpatterns = [
 		name='pdf_ingreso_econ_suc'),
 	url(r'^pdf_desempenio_sucursal/(?P<fechaInicio>\d{4}-\d{2}-\d{2})/(?P<fechaFin>\d{4}-\d{2}-\d{2})$',
 		views.RepDesempenioSucursal.as_view(),
-		name='pdf_ingreso_econ_suc'),
+		name='pdf_desempenio_sucursal'),
 	url(r'^pdf_ing_ret_estu_su/(?P<fechaInicio>\d{4}-\d{2}-\d{2})/(?P<fechaFin>\d{4}-\d{2}-\d{2})$',
 		views.RepIngRetEstSucursal.as_view(),
 		name='pdf_ing_ret_estu_su'),

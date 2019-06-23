@@ -57,7 +57,7 @@
 	</div>
 	<script type="text/javascript">
 		function descargar(){
-			window.open("{% url 'pdf_ingreso_econ_suc' fechaInicio|date:"Y-m-d" fechaFin|date:"Y-m-d" %}")
+			window.open("{% url 'pdf_desempenio_sucursal' fechaInicio|date:"Y-m-d" fechaFin|date:"Y-m-d" %}")
 		}
 	</script>
 {% endblock main_content %}

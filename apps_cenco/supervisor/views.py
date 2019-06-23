@@ -56,7 +56,7 @@ def verDesempenioSucursal(request):
 				if request.POST.get('previa') == '':
 					return verSalidaDesempenioSucursal(request)
 				else:
-					return redirect('pdf_ingreso_econ_suc', request.POST.get('fecha_inicio'), request.POST.get('fecha_fin'))
+					return redirect('pdf_desempenio_sucursal', request.POST.get('fecha_inicio'), request.POST.get('fecha_fin'))
 			msj = "Fecha Fin debe ser mayor a Fecha Inicio"
 			print msj
 			esDanger = True
