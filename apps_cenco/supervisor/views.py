@@ -27,22 +27,42 @@ def verIngresoEconSuc(request):
 	}
 	return render(request, 'supervisor/ingresos-econ-suc.html', context)
 
+@login_required
 def verIngrRetiEstudiantesSuc(request):
-	if request.method == 'POST':
-		if request.POST.get('previa') == '':
-			return verSalidaIngreSalEstudiantesSuc(request)
-		else:
-			fechaInicio = request.POST.get('fecha_inicio')
-			fechaFin = request.POST.get('fecha_fin')
-			return redirect('pdf_ing_ret_estu_su', fechaInicio, fechaFin)
-	fechaHoy = datetime.now().date()
-	fechaInicio = fechaHoy - timedelta(days = 30)
-	context = {
-		'fechaHoy' : fechaHoy,
-		'fechaInicio' : fechaInicio,
-	}
-	return render(request, 'supervisor/ingre-ret-estudiantes-suc.html', context)
+	if request.user.groups.filter(name="Supervisor").exists():
+		if request.method == 'POST':
+			fechaInicio = datetime.strptime(request.POST.get('fecha_inicio'), '%Y-%m-%d')
+			fechaFin = datetime.strptime(request.POST.get('fecha_fin'), '%Y-%m-%d')
+			if fechaFin>fechaInicio:
+				if request.POST.get('previa') == '':
+					return verSalidaIngreSalEstudiantesSuc(request)
+				else:
+					fechaInicio = request.POST.get('fecha_inicio')
+					fechaFin = request.POST.get('fecha_fin')
+					return redirect('pdf_ing_ret_estu_su', fechaInicio, fechaFin)
+			else:
+				msj = "Fecha Fin debe ser mayor a Fecha Inicio"
+				print msj
+				esDanger = True
+				fechaHoy = datetime.now().date()
+				fechaInicio = fechaHoy - timedelta(days = 30)
+				context = {
+				'fechaHoy' : fechaHoy,
+				'fechaInicio' : fechaInicio,
+				'msj' : msj,
+				}
+				return render(request, 'supervisor/ingre-ret-estudiantes-suc.html', context)
 
+		fechaHoy = datetime.now().date()
+		fechaInicio = fechaHoy - timedelta(days = 30)
+		context = {
+			'fechaHoy' : fechaHoy,
+			'fechaInicio' : fechaInicio,
+			'msj' : ''
+		}
+		return render(request, 'supervisor/ingre-ret-estudiantes-suc.html', context)
+	else:
+		raise Http404('Error, no tiene permiso para esta página')
 
 
 
@@ -62,42 +82,53 @@ def verSalidaIngresoEconSuc(request):
 	}
 	return render(request, 'supervisor/sal-ingresos-econ-suc.html', context)
 
+@login_required
 def verSalidaIngreSalEstudiantesSuc(request):
-	fechaHoy = datetime.now().date()
-	fechaInicio = datetime.strptime(request.POST.get('fecha_inicio'), '%Y-%m-%d')
-	fechaFin = datetime.strptime(request.POST.get('fecha_fin'), '%Y-%m-%d')
-	sucursales = consultaInsRetEstuSuc(fechaInicio, fechaFin)
-	for sucursal in sucursales:
-		print sucursal[0]
-	context = {
-		'fechaHoy' : fechaHoy,
-		'fechaInicio': fechaInicio,
-		'fechaFin': fechaFin,
-		'sucursales': sucursales,
-	}
-	return render(request, 'supervisor/sal-ingre-ret-estudiantes-suc.html', context)
+	if request.user.groups.filter(name="Supervisor").exists():
+		fechaHoy = datetime.now().date()
+		fechaInicio = datetime.strptime(request.POST.get('fecha_inicio'), '%Y-%m-%d')
+		fechaFin = datetime.strptime(request.POST.get('fecha_fin'), '%Y-%m-%d')
+		sucursales = consultaInsRetEstuSuc(fechaInicio, fechaFin)
+		for sucursal in sucursales:
+			print sucursal[0]
+		context = {
+			'fechaHoy' : fechaHoy,
+			'fechaInicio': fechaInicio,
+			'fechaFin': fechaFin,
+			'sucursales': sucursales,
+		}
+		return render(request, 'supervisor/sal-ingre-ret-estudiantes-suc.html', context)
+	else:
+		raise Http404('Error, no tiene permiso para esta página')
 
+@login_required
 def verSalidaDemandaCarrerasSuc(request):
-	fechaHoy = datetime.now().date()
-	sucursales = consultaDemandaCarreras()
+	if request.user.groups.filter(name="Supervisor").exists():
+		fechaHoy = datetime.now().date()
+		sucursales = consultaDemandaCarreras()
 
-	for sucursal in sucursales:
-		print sucursal
-	context = {
-		'fechaHoy' : fechaHoy,
-		'sucursales': sucursales,
-	}
-	return render(request, 'supervisor/sal-demanda-carreras.html', context)
+		for sucursal in sucursales:
+			print sucursal
+		context = {
+			'fechaHoy' : fechaHoy,
+			'sucursales': sucursales,
+		}
+		return render(request, 'supervisor/sal-demanda-carreras.html', context)
+	else:
+		raise Http404('Error, no tiene permiso para esta página')
 
+@login_required
 def verSalidaEmpleadosSuc(request):
-	fechaHoy = datetime.now().date()
-	sucursales = consultaEmpleadosSuc()
-	context = {
-		'fechaHoy' : fechaHoy,
-		'sucursales': sucursales,
-	}
-	return render(request, 'supervisor/sal-empleados-sucursal.html', context)
-
+	if request.user.groups.filter(name="Supervisor").exists():
+		fechaHoy = datetime.now().date()
+		sucursales = consultaEmpleadosSuc()
+		context = {
+			'fechaHoy' : fechaHoy,
+			'sucursales': sucursales,
+		}
+		return render(request, 'supervisor/sal-empleados-sucursal.html', context)
+	else:
+		raise Http404('Error, no tiene permiso para esta página')
 
 
 
