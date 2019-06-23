@@ -14,7 +14,7 @@
 	<div class="col-md-12">
 		<div class="card">
 			<div class="card-header">
-				<h5 class="title">Reporte de Inasistencia Estudiantil</h5>
+				<h5 class="title">Reporte de Desempeño Estudiantil</h5>
 				<p>Generado el {{ fechaHoy }}</p>
 			</div>
 			<div class="card-body">
@@ -35,21 +35,15 @@
 								</tr>
 							</thead>
 							<tbody>
-								<tr>
-									<td>xxxxxxxxxxxxx</td>
-									<td>xxxxxxxx</td>
-									<td>99.99</td>
-								</tr>
-								<tr>
-									<td>xxxxxxxxxxxxx</td>
-									<td>xxxxxxxx</td>
-									<td>99.99</td>
-								</tr>
-                                <tr>
-									<td>xxxxxxxxxxxxx</td>
-									<td>xxxxxxxx</td>
-									<td>99.99</td>
-								</tr>
+								{% for alumno in alumnos %}
+                                    {% if alumno.grupo_id == grupo.codigo %}
+                                    <tr>
+                                        <td>{{ alumno.nombre }} {{ alumno.apellido }}</td>
+                                        <td>{{ alumno.encargado.nombre }} {{ alumno.encargado.apellido }}</td>
+                                        <td>{{ alumno.nota }}</td>
+                                    </tr>
+                                    {% endif %}
+                                {% endfor %}
 							</tbody>
 						</table>
 					</div>
@@ -70,7 +64,7 @@
 	</div>
     <script type="text/javascript">
 		function descargar(){
-				variable = "{% url 'pdf_desempenio_estudiantil' grupo %}";
+				variable = "{% url 'pdf_desempenio_estudiantil' grupo desempenio cantidad %}";
 				window.open(variable, '_blank');
 		}
 	</script>

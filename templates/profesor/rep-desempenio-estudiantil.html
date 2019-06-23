@@ -20,16 +20,15 @@
 			</tr>
 		</thead>
 		<tbody>
+        {% for alumno in alumnos %}
+            {% if alumno.grupo_id == grupo.codigo %}
 			<tr>
-				<td>xxxxxxxxxxxxx</td>
-				<td>xxxxxxxx</td>
-				<td>99.99</td>
+				<td>{{ alumno.nombre }} {{ alumno.apellido }}</td>
+				<td>{{ alumno.encargado.nombre }} {{ alumno.encargado.apellido }}</td>
+				<td>{{ alumno.nota }}</td>
 			</tr>
-            <tr>
-				<td>xxxxxxxxxxxxx</td>
-				<td>xxxxxxxx</td>
-				<td>99.99</td>
-			</tr>
+            {% endif %}
+        {% endfor %}
         </tbody>
 	</table>
     {% endfor %}

@@ -23,11 +23,11 @@ def verDesempenioEstudiantil(request):
             if 'vistaPrevia' in request.POST:
                 return verSalidaDesempenioEstudiantil(request)
             if 'descargar' in request.POST:
-                fechaHoy = str((datetime.now().date().strftime("%d/%m/%Y")))
+                #fechaHoy = str((datetime.now().date().strftime("%d/%m/%Y")))
                 grupo = int(request.POST.get('grupo'))
-                desempenio = request.POST.get('desempenio')
+                desempenio = int(request.POST.get('desempenio'))
                 cantidad = request.POST.get('cantidad')
-                return redirect('pdf_desempenio_estudiantil', grupo)
+                return redirect('pdf_desempenio_estudiantil', grupo, desempenio, cantidad)
         else:
             idProf = prof.codigo
             grupo = Grupo.objects.filter(profesor=idProf, activo_grupo=True)
@@ -70,52 +70,65 @@ def verInasistenciaEstudiantil(request):
 
 
 #Salidas
+@login_required
 def verSalidaDesempenioEstudiantil(request):
-    prof = Empleado.objects.get(username=request.user)
-    if request.method == 'POST':
-        fechaHoy = str((datetime.now().date().strftime("%d/%m/%Y")))
-        grupo = int(request.POST.get('grupo'))
-        desempenio = request.POST.get('desempenio')
-        cantidad = request.POST.get('cantidad')
-        if grupo == 0:
-            idProf = prof.codigo
-            grupos = Grupo.objects.filter(profesor=idProf, activo_grupo=True).order_by('codigo')
-        else:
-            grupos = Grupo.objects.filter(codigo=grupo).order_by('codigo')
-        context = {
-            'grupo': grupo,
-            'fechaHoy': fechaHoy,
-            'grupos': grupos,
-        }
-        return render(request, 'profesor/sal-desempenio-estudiantil.html', context)
+    if request.user.groups.filter(name="Profesor").exists():
+        prof = Empleado.objects.get(username=request.user)
+        if request.method == 'POST':
+            fechaHoy = str((datetime.now().date().strftime("%d/%m/%Y")))
+            grupo = int(request.POST.get('grupo'))
+            desempenio = int(request.POST.get('desempenio'))
+            cantidad = request.POST.get('cantidad')
+            if grupo == 0:
+                idProf = prof.codigo
+                grupos = Grupo.objects.filter(profesor=idProf, activo_grupo=True).order_by('codigo')
+                alumnos = consultaDesempenioEstudiantilTodos(idProf, desempenio, cantidad)['alumnos']
+            else:
+                grupos = Grupo.objects.filter(codigo=grupo).order_by('codigo')
+                alumnos = consultaDesempenioEstudiantilGrupo(grupo, desempenio, cantidad)['alumnos']
+            context = {
+                'grupo': grupo,
+                'fechaHoy': fechaHoy,
+                'grupos': grupos,
+                'desempenio':desempenio,
+                'cantidad':cantidad,
+                'alumnos':alumnos,
+            }
+            return render(request, 'profesor/sal-desempenio-estudiantil.html', context)
+    else:
+        raise Http404('Error, no tiene permiso para esta página')
 
+@login_required
 def verSalidaInasistenciaEstudiantil(request):
-    prof = Empleado.objects.get(username=request.user)
-    if request.method == 'POST':
-        fechaHoy = str((datetime.now().date().strftime("%d/%m/%Y")))
-        grupo = int(request.POST.get('grupo'))
-        cantidad = request.POST.get('cantidad')
-        fechaInicio = request.POST.get('fecha_inicio')
-        fechaFin = request.POST.get('fecha_fin')
-        if grupo == 0:
-            idProf = prof.codigo
-            grupos = Grupo.objects.filter(profesor=idProf, activo_grupo=True).order_by('codigo')
-            alumnos=None
-            alumnos=consultaInasistenciaEstudiantilTodos(idProf, fechaInicio, fechaFin, cantidad)['alumnos']
-        else:
-            grupos = Grupo.objects.filter(codigo=grupo).order_by('codigo')
-            alumnos = None
-            alumnos = consultaInasistenciaEstudiantilGrupo(grupo, fechaInicio, fechaFin, cantidad)['alumnos']
-        context = {
-            'grupo': grupo,
-            'cantidad':cantidad,
-            'fechaHoy': fechaHoy,
-            'grupos': grupos,
-            'fechaInicio':datetime.strptime(fechaInicio,"%Y-%m-%d"),
-            'fechaFin': datetime.strptime(fechaFin,"%Y-%m-%d"),
-            'alumnos':alumnos,
-        }
-        return render(request, 'profesor/sal-inasistencia-estudiantil.html', context)
+    if request.user.groups.filter(name="Profesor").exists():
+        prof = Empleado.objects.get(username=request.user)
+        if request.method == 'POST':
+            fechaHoy = str((datetime.now().date().strftime("%d/%m/%Y")))
+            grupo = int(request.POST.get('grupo'))
+            cantidad = request.POST.get('cantidad')
+            fechaInicio = request.POST.get('fecha_inicio')
+            fechaFin = request.POST.get('fecha_fin')
+            if grupo == 0:
+                idProf = prof.codigo
+                grupos = Grupo.objects.filter(profesor=idProf, activo_grupo=True).order_by('codigo')
+                alumnos=None
+                alumnos=consultaInasistenciaEstudiantilTodos(idProf, fechaInicio, fechaFin, cantidad)['alumnos']
+            else:
+                grupos = Grupo.objects.filter(codigo=grupo).order_by('codigo')
+                alumnos = None
+                alumnos = consultaInasistenciaEstudiantilGrupo(grupo, fechaInicio, fechaFin, cantidad)['alumnos']
+            context = {
+                'grupo': grupo,
+                'cantidad':cantidad,
+                'fechaHoy': fechaHoy,
+                'grupos': grupos,
+                'fechaInicio':datetime.strptime(fechaInicio,"%Y-%m-%d"),
+                'fechaFin': datetime.strptime(fechaFin,"%Y-%m-%d"),
+                'alumnos':alumnos,
+            }
+            return render(request, 'profesor/sal-inasistencia-estudiantil.html', context)
+    else:
+        raise Http404('Error, no tiene permiso para esta página')
 
 
 #Reportes
@@ -129,13 +142,18 @@ class RepDesempenioEstudiantil(PDFTemplateView):
         context = super(RepDesempenioEstudiantil, self).get_context_data(**kwargs)
         context['fechaHoy'] = str((datetime.now().date().strftime("%d/%m/%Y")))
         grupo= int(self.kwargs['grupo'])
+        desempenio = int(self.kwargs['desempenio'])
+        cantidad = int(self.kwargs['cantidad'])
         prof = Empleado.objects.get(username=self.request.user)
         if grupo == 0:
             idProf = prof.codigo
             grupos = Grupo.objects.filter(profesor=idProf, activo_grupo=True).order_by('codigo')
+            alumnos = consultaDesempenioEstudiantilTodos(idProf, desempenio, cantidad)['alumnos']
         else:
             grupos = Grupo.objects.filter(codigo=grupo).order_by('codigo')
+            alumnos = consultaDesempenioEstudiantilGrupo(grupo, desempenio, cantidad)['alumnos']
         context['grupos'] = grupos
+        context['alumnos'] = alumnos
         return context
 
 class RepInasistenciaEstudiantil(PDFTemplateView):
@@ -210,6 +228,69 @@ def consultaInasistenciaEstudiantilGrupo(grupo, fechaInicio, fechaFin, cantidad)
         "order by cant_ina desc "
         "FETCH FIRST " + str(cantidad) + " ROWS ONLY"
     )
+    context = {
+		'alumnos' : alumnos
+	}
+    return context
+
+
+def consultaDesempenioEstudiantilTodos(idProf, desempenio, cantidad):
+    if desempenio == 1:
+        alumnos = Alumno.objects.raw(
+            "select a.codigo, i.grupo_id as grupo_id, max(round(e.nota_evaluacion,2)) as nota, max(ex.fecha_realizacion_examen) " 
+            "from db_app_alumno as a join db_app_cursa as c on c.alumno_id=a.codigo "
+            "join db_app_evaluacion as e on e.cursa_id=c.codigo_cursa "
+            "join db_app_examen as ex on ex.codigo_examen=e.examen_id "
+            "join db_app_inscripcion as i on i.alumno_id=a.codigo "
+            "where i.actual_inscripcion=True and c.actual_cursa=True and i.grupo_id in "
+            "(select gr.codigo from db_app_grupo as gr where gr.profesor_id="+str(idProf)+") "
+            "group by a.codigo,grupo_id "
+            "order by nota desc "
+            "FETCH FIRST "+str(cantidad)+" ROWS ONLY"
+        )
+    if desempenio == 2:
+        alumnos = Alumno.objects.raw(
+            "select a.codigo, i.grupo_id as grupo_id, min(round(e.nota_evaluacion,2)) as nota, max(ex.fecha_realizacion_examen) " 
+            "from db_app_alumno as a join db_app_cursa as c on c.alumno_id=a.codigo "
+            "join db_app_evaluacion as e on e.cursa_id=c.codigo_cursa "
+            "join db_app_examen as ex on ex.codigo_examen=e.examen_id "
+            "join db_app_inscripcion as i on i.alumno_id=a.codigo "
+            "where i.actual_inscripcion=True and c.actual_cursa=True and i.grupo_id in "
+            "(select gr.codigo from db_app_grupo as gr where gr.profesor_id="+str(idProf)+") "
+            "group by a.codigo,grupo_id "
+            "order by nota asc "
+            "FETCH FIRST "+str(cantidad)+" ROWS ONLY"
+        )
+    context = {
+        'alumnos': alumnos
+    }
+    return context
+
+def consultaDesempenioEstudiantilGrupo(grupo, desempenio,cantidad):
+    if desempenio==1:
+        alumnos = Alumno.objects.raw(
+            "select a.codigo,i.grupo_id as grupo_id, max(round(e.nota_evaluacion,2)) as nota, max(ex.fecha_realizacion_examen) "
+            "from db_app_alumno as a join db_app_cursa as c on c.alumno_id=a.codigo "
+            "join db_app_evaluacion as e on e.cursa_id=c.codigo_cursa "
+            "join db_app_examen as ex on ex.codigo_examen=e.examen_id "
+            "join db_app_inscripcion as i on i.alumno_id=a.codigo "
+            "where i.actual_inscripcion=True and c.actual_cursa=True and i.grupo_id= " + str(grupo) +
+            "group by a.codigo, grupo_id "
+            "order by nota desc "
+            "FETCH FIRST " + str(cantidad) + " ROWS ONLY"
+        )
+    if desempenio==2:
+        alumnos = Alumno.objects.raw(
+            "select a.codigo,i.grupo_id as grupo_id, min(round(e.nota_evaluacion,2)) as nota, max(ex.fecha_realizacion_examen) " 
+            "from db_app_alumno as a join db_app_cursa as c on c.alumno_id=a.codigo "
+            "join db_app_evaluacion as e on e.cursa_id=c.codigo_cursa "
+            "join db_app_examen as ex on ex.codigo_examen=e.examen_id "
+            "join db_app_inscripcion as i on i.alumno_id=a.codigo "
+            "where i.actual_inscripcion=True and c.actual_cursa=True and i.grupo_id= " + str(grupo) +
+            "group by a.codigo, grupo_id "
+            "order by nota asc "
+            "FETCH FIRST "+ str(cantidad)+" ROWS ONLY"
+        )
     context = {
 		'alumnos' : alumnos
 	}

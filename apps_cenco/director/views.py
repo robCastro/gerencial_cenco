@@ -112,26 +112,30 @@ def verSalidaIngresoEconSuc(request):
 	}
 	return render(request, 'director/sal-ingresos-econ-suc.html', context)
 
+@login_required
 def verSalidaMorasEstudiantiles(request):
-	sucursal = Empleado.objects.get(username=request.user).sucursal
-	if request.method == 'POST':
-		fechaHoy = str((datetime.now().date().strftime("%d/%m/%Y")))
-		grupo = int(request.POST.get('grupo'))
-		cantidad = request.POST.get('cantidad')
-		if grupo == 0:
-			grupos = consultaGruposSucursal(sucursal)['grupos']
-			alumnos = consultaMorasEstudiantilesTodos(sucursal,cantidad)['alumnos']
-		else:
-			grupos = Grupo.objects.filter(codigo=grupo).order_by('codigo')
-			alumnos = consultaMorasEstudiantilesGrupo(grupo, cantidad)['alumnos']
-		context = {
-			'grupo': grupo,
-			'fechaHoy': fechaHoy,
-			'grupos': grupos,
-			'alumnos':alumnos,
-			'cantidad':cantidad,
-		}
-		return render(request, 'director/sal-moras-estudiantiles.html', context)
+  	if request.user.groups.filter(name="Director").exists():
+		sucursal = Empleado.objects.get(username=request.user).sucursal
+		if request.method == 'POST':
+			fechaHoy = str((datetime.now().date().strftime("%d/%m/%Y")))
+			grupo = int(request.POST.get('grupo'))
+			cantidad = request.POST.get('cantidad')
+			if grupo == 0:
+				grupos = consultaGruposSucursal(sucursal)['grupos']
+				alumnos = consultaMorasEstudiantilesTodos(sucursal,cantidad)['alumnos']
+			else:
+				grupos = Grupo.objects.filter(codigo=grupo).order_by('codigo')
+				alumnos = consultaMorasEstudiantilesGrupo(grupo, cantidad)['alumnos']
+			context = {
+				'grupo': grupo,
+				'fechaHoy': fechaHoy,
+				'grupos': grupos,
+				'alumnos':alumnos,
+				'cantidad':cantidad,
+			}
+			return render(request, 'director/sal-moras-estudiantiles.html', context)
+	else:
+		raise Http404('Error, no tiene permiso para esta página')
 
 @login_required
 def verSalidaDemandaCarreras(request):
