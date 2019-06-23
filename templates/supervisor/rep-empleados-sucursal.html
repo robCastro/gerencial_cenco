@@ -1,0 +1,31 @@
+{% extends "plantillas_base/base_reporte.html" %}
+
+{% block titulo-reporte %}
+    Reporte de Empleados por Sucursal
+{% endblock titulo-reporte %}
+
+{% block subtitulo-reporte %}
+    Generado el {{fechaHoy|date:"d/m/Y"}}.
+{% endblock subtitulo-reporte %}
+
+{% block contenido-reporte %}
+    <table class="table" style="text-align: center">
+        <thead>
+        <tr>
+            <th>Sucursal</th>
+            <th>Telefono</th>
+            <th>Direccion</th>
+            <th>Director</th>
+            <th>Total de Empleados</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for sucursal in sucursales %}
+            <tr>
+                {% for elemento_sucursal in sucursal %}
+                    <td>{{elemento_sucursal}}</td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock contenido-reporte %}

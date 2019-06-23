@@ -29,3 +29,8 @@ urlpatterns = [
     url(r'^logout/$', auth_views.logout, {'template_name': 'Login/logout.html'}, name='logout'),
     url(r'^$', principal, name="inicio"),
 ]
+
+admin.site.site_header = 'CENCO'
+admin.site.index_title= 'Sitio Administrativo'
+admin.site.site_title= 'CENCO'
+

@@ -1,0 +1,33 @@
+{% extends "plantillas_base/base_reporte.html" %}
+
+{% block titulo-reporte %}
+    Reporte de Demanda de Carreras por Sucursal
+{% endblock titulo-reporte %}
+
+{% block subtitulo-reporte %}
+    Generado el {{fechaHoy|date:"d/m/Y"}}.
+{% endblock subtitulo-reporte %}
+
+{% block contenido-reporte %}
+    <table class="table" style="text-align: center">
+        <thead>
+        <tr>
+            <th>Sucursal</th>
+            <th>Telefono</th>
+            <th>Direccion</th>
+            <th>Carrera más solicitada</th>
+            <th>Alumnos</th>
+            <th>Carrera menos solicitada</th>
+            <th>Alumnos</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for sucursal in sucursales %}
+            <tr>
+                {% for elemento_sucursal in sucursal %}
+                    <td>{{elemento_sucursal}}</td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock contenido-reporte %}

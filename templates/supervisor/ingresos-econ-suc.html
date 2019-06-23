@@ -1,9 +1,9 @@
-{%extends 'plantillas_base/base_director.html'%}
+{%extends 'plantillas_base/base_supervisor.html'%}
 
 {%load staticfiles%}
 
 {% block titulo %}
-	Ingresos y Retiros de Estudiantes
+	Ingresos Econ. de Sucursal
 {% endblock titulo %}
 
 {% block head_content %}
@@ -25,30 +25,17 @@
 		<form method="POST">
 			<div class="card">
 				<div class="card-header">
-					<h5 class="title">Reporte de Inscripciones y Retiro de Estudiantes</h5>
+					<h5 class="title">Reporte de Ingresos Economicos de Sucursal</h5>
 				</div>
 				<div class="card-body">
 					
 						{% csrf_token %}
 						<div class="row justify-content-center">
 							<div class="col-md-3">
-								<h6 class="ml-5 pt-2">Filtro:</h6>
-							</div>
-							<div class="col-md-3">
-								
-								<select class="form-control" name="tipo">
-									<option value="1">Inscritos</option>
-									<option value="2">Retirados</option>
-									<option value="3">Todos</option>
-								</select>
-							</div>
-						</div>
-						<div class="row mt-4 justify-content-center">
-							<div class="col-md-3">
 								<h6 class="ml-5 pt-2">Fecha Inicio:</h6>
 							</div>
 							<div class="col-md-3">
-								<input type="date" name="fecha_inicio" class="form-control" value="{{fechaInicio}}">
+								<input type="date" name="fecha_inicio" class="form-control" value="{{ fechaInicio|date:"Y-m-d" }}">
 							</div>
 						</div>
 						<div class="row mt-4 justify-content-center">
@@ -56,28 +43,22 @@
 								<h6 class="ml-5 pt-2">Fecha Fin:</h6>
 							</div>
 							<div class="col-md-3">
-								<input type="date" name="fecha_fin" class="form-control" value="{{fechaHoy}}">
+								<input type="date" name="fecha_fin" class="form-control" value="{{fechaHoy|date:"Y-m-d"}}">
 							</div>
 						</div>
 					
 				</div>
 				<div class="card-footer">
-					<div class="row">
+					<div class="row mt-4">
 						<div class="col-md-2 my-1 mx-1">
-							<button type="submit" name="previa" class="btn btn-default">Vista Previa</button>
+							<button type="button submit" class="btn btn-default" name="previa">Vista Previa</button>
 						</div>
 						<div class="col-md-2 my-1 mx-1">
-							<button type="submit" name="descarga" class="btn btn-default">Descargar</button>
+							<button type="button submit" class="btn btn-default" name="descargar">Descargar</button>
 						</div>
 					</div>
 				</div>
 			</div>
 		</form>
 	</div>	
-
-	<script type="text/javascript">
-		function descargarPDF(){
-			
-		}
-	</script>
 {% endblock main_content %}
