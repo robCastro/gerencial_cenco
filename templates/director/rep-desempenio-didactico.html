@@ -1,0 +1,30 @@
+{% extends "plantillas_base/base_reporte.html" %}
+
+{% block titulo-reporte %}
+	Reporte de Desempeño Didactico
+{% endblock titulo-reporte %}
+
+{% block subtitulo-reporte %}
+	Generado el {{fechaHoy|date:"d/m/Y"}}.
+{% endblock subtitulo-reporte %}
+
+{% block contenido-reporte %}
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Profesor</th>
+				<th>Alumnos que atiende</th>
+				<th>Calificación</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for profesor in profesores %}
+			<tr>
+				{% for elemento in profesor %}
+					<td>{{elemento}}</td>
+				{% endfor %}
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+{% endblock contenido-reporte %}

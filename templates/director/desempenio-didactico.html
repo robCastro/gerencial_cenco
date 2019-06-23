@@ -18,7 +18,7 @@
 			</div>
 			<div class="card-body">
 				<div class="row justify-content-center">
-					<h6>Generado el {{fechaHoy}}</h6>
+					<h6>Generado el {{fechaHoy|date:"d/m/Y"}}</h6>
 				</div>
 				<div class="row justify-content-center">
 					<div class="table-responsive">
@@ -31,56 +31,13 @@
 								</tr>
 							</thead>
 							<tbody>
+								{% for profesor in profesores %}
 								<tr>
-									<td>lasdkjalskdjlakllaksd</td>
-									<td>99</td>
-									<td class="text-center">9.99</td>
+									{% for elemento in profesor %}
+										<td>{{elemento}}</td>
+									{% endfor %}
 								</tr>
-								<tr>
-									<td>lasdkjalskdjlakllaksd</td>
-									<td>99</td>
-									<td class="text-center">9.99</td>
-								</tr>
-								<tr>
-									<td>lasdkjalskdjlakllaksd</td>
-									<td>99</td>
-									<td class="text-center">9.99</td>
-								</tr>
-								<tr>
-									<td>lasdkjalskdjlakllaksd</td>
-									<td>99</td>
-									<td class="text-center">9.99</td>
-								</tr>
-								<tr>
-									<td>lasdkjalskdjlakllaksd</td>
-									<td>99</td>
-									<td class="text-center">9.99</td>
-								</tr>
-								<tr>
-									<td>lasdkjalskdjlakllaksd</td>
-									<td>99</td>
-									<td class="text-center">9.99</td>
-								</tr>
-								<tr>
-									<td>lasdkjalskdjlakllaksd</td>
-									<td>99</td>
-									<td class="text-center">9.99</td>
-								</tr>
-								<tr>
-									<td>lasdkjalskdjlakllaksd</td>
-									<td>99</td>
-									<td class="text-center">9.99</td>
-								</tr>
-								<tr>
-									<td>lasdkjalskdjlakllaksd</td>
-									<td>99</td>
-									<td class="text-center">9.99</td>
-								</tr>
-								<tr>
-									<td>lasdkjalskdjlakllaksd</td>
-									<td>99</td>
-									<td class="text-center">9.99</td>
-								</tr>
+								{% endfor %}
 							</tbody>
 						</table>
 					</div>
@@ -89,10 +46,15 @@
 			<div class="card-footer">
 				<div class="row">
 					<div class="col-md-2 my-1 mx-1">
-						<button class="btn btn-default">Descargar</button>
+						<button type="button" onclick="descargar()" class="btn btn-default">Descargar</button>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
+	<script type="text/javascript">
+		function descargar(){
+			window.open("{% url 'pdf_desempenio_didactico' sucursal.codigo_sucursal %}")
+		}
+	</script>
 {% endblock main_content %}

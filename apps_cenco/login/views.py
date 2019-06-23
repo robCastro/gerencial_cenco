@@ -25,7 +25,7 @@ def principal(request):
             return redirect('')
 
         elif has_group(request.user, 'Supervisor'):
-            return redirect('')
+            return redirect('ingreso_econ_suc')
         elif request.user.is_superuser:
             return redirect('etl')
     else:
