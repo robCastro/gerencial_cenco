@@ -16,19 +16,35 @@ from django.db import connections
 def verIngresosRetirosEstudiantes(request):
 	if request.user.groups.filter(name="Director").exists():
 		if request.method == 'POST':
-			if (request.POST.get('previa') == ''):
-				return verSalidaIngresosRetirosEstudiantes(request)
+			fechaInicio = datetime.strptime(request.POST.get('fecha_inicio'), '%Y-%m-%d')
+			fechaFin = datetime.strptime(request.POST.get('fecha_fin'), '%Y-%m-%d')
+			if fechaFin>fechaInicio:
+				if (request.POST.get('previa') == ''):
+					return verSalidaIngresosRetirosEstudiantes(request)
+				else:
+					fechaInicio = request.POST.get('fecha_inicio')
+					fechaFin = request.POST.get('fecha_fin')
+					sucursal = Empleado.objects.get(username = request.user).sucursal
+					tipo = int(request.POST.get('tipo'))
+					return redirect('pdf_ingreso_retiros_estudiantes', sucursal.codigo_sucursal, fechaInicio, fechaFin, tipo)
 			else:
-				fechaInicio = request.POST.get('fecha_inicio')
-				fechaFin = request.POST.get('fecha_fin')
-				sucursal = Empleado.objects.get(username = request.user).sucursal
-				tipo = int(request.POST.get('tipo'))
-				return redirect('pdf_ingreso_retiros_estudiantes', sucursal.codigo_sucursal, fechaInicio, fechaFin, tipo)
+				msj = "Fecha Fin debe ser mayor a Fecha Inicio"
+				print msj
+				esDanger = True
+				fechaHoy = datetime.now().date() ###Fecha hoy se usa como fecha fin en front
+				fechaInicio = fechaHoy - timedelta(days = 30)
+				context = {
+					'fechaHoy' : str(fechaHoy),
+					'fechaInicio' : str(fechaInicio),
+					'msj' : msj,
+					}
+				return render(request, 'director/ingresos-retiros-estudiantes.html', context)
 		fechaHoy = datetime.now().date() ###Fecha hoy se usa como fecha fin en front
 		fechaInicio = fechaHoy - timedelta(days = 30)
 		context = {
 			'fechaHoy' : str(fechaHoy),
 			'fechaInicio' : str(fechaInicio),
+			'msj' : ''
 		}
 		return render(request, 'director/ingresos-retiros-estudiantes.html', context)
 	else:
