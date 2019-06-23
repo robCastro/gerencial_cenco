@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 from wkhtmltopdf.views import PDFTemplateView
 from django.contrib.auth.decorators import permission_required, login_required
 from django.http import Http404, HttpResponse
-from apps_cenco.db_app.models import Inscripcion, Estado, Empleado, Sucursal, Grupo, Carrera
+from apps_cenco.db_app.models import Inscripcion, Estado, Empleado, Sucursal, Grupo, Carrera, Alumno
 from django.views.generic import ListView
 
 ##Entradas
@@ -62,10 +62,10 @@ def verMorasEstudiantiles(request):
 			if 'vistaPrevia' in request.POST:
 				return verSalidaMorasEstudiantiles(request)
 			if 'descargar' in request.POST:
-				fechaHoy = str((datetime.now().date().strftime("%d/%m/%Y")))
+				#fechaHoy = str((datetime.now().date().strftime("%d/%m/%Y")))
 				grupo = int(request.POST.get('grupo'))
 				cantidad = request.POST.get('cantidad')
-				return redirect('pdf_desempenio_estudiantil', grupo)
+				return redirect('pdf_moras_estudiantiles', grupo,cantidad)
 		else:
 			grupos = consultaGruposSucursal(sucursal)['grupos']
 			context = {
@@ -120,12 +120,16 @@ def verSalidaMorasEstudiantiles(request):
 		cantidad = request.POST.get('cantidad')
 		if grupo == 0:
 			grupos = consultaGruposSucursal(sucursal)['grupos']
+			alumnos = consultaMorasEstudiantilesTodos(sucursal,cantidad)['alumnos']
 		else:
 			grupos = Grupo.objects.filter(codigo=grupo).order_by('codigo')
+			alumnos = consultaMorasEstudiantilesGrupo(grupo, cantidad)['alumnos']
 		context = {
 			'grupo': grupo,
 			'fechaHoy': fechaHoy,
 			'grupos': grupos,
+			'alumnos':alumnos,
+			'cantidad':cantidad,
 		}
 		return render(request, 'director/sal-moras-estudiantiles.html', context)
 
@@ -186,6 +190,28 @@ class RepDemandaCarreras(PDFTemplateView):
 		context['carreras'] = carreras
 		return context
 
+class RepMorasEstudiantiles(PDFTemplateView):
+	filename = 'moras_estudiantiles.pdf'
+	template_name = 'director/rep-moras-estudiantiles.html'
+	show_content_in_browser = True  ###Para no descargar automaticamente
+
+	###Para agregar context manuales
+	def get_context_data(self, **kwargs):
+		context = super(RepMorasEstudiantiles, self).get_context_data(**kwargs)
+		context['fechaHoy'] = str((datetime.now().date().strftime("%d/%m/%Y")))
+		grupo= int(self.kwargs['grupo'])
+		cantidad = int(self.kwargs['cantidad'])
+		sucursal = Empleado.objects.get(username=self.request.user).sucursal
+		if grupo == 0:
+			grupos = consultaGruposSucursal(sucursal)['grupos']
+			alumnos = consultaMorasEstudiantilesTodos(sucursal, cantidad)['alumnos']
+		else:
+			grupos = Grupo.objects.filter(codigo=grupo).order_by('codigo')
+			alumnos = consultaMorasEstudiantilesGrupo(grupo, cantidad)['alumnos']
+		context['grupos'] = grupos
+		context['alumnos'] = alumnos
+		return context
+
 
 ##Consultas Auxiliares
 def consultaIngresosRetirosEstudiantes(fechaInicio, fechaFin, tipo_estado, sucursal):
@@ -221,6 +247,68 @@ def consultaGruposSucursal(sucursal):
 	)
 	context = {
 		'grupos' : grupos
+	}
+	return context
+
+def consultaMorasEstudiantilesTodos(sucursal,cantidad):
+	alumnos = Alumno.objects.raw(
+		"select a.codigo,i.grupo_id as grupo_id, "
+		"(select numero from db_app_telefono as tel "
+		"where tel.encargado_id=a.encargado_id "
+		"FETCH FIRST 1 ROWS ONLY) as tel_encargado, "
+		"(select pago.fecha_pago from db_app_detallepago as pago "
+		"join db_app_colegiatura as cole on cole.codigo_colegiatura=pago.colegiatura_id "
+		"join db_app_expediente as e on e.codigo_expediente=cole.expediente_id "
+		"where e.alumno_id=a.codigo and e.activo_expediente=True and cole.actual_colegiatura=True and pago.cancelado=True "
+		"order by pago.fecha_pago desc "
+		"FETCH FIRST 1 ROWS ONLY) as ult_pago, "
+		"ex.pagado_hasta as pagado_hasta, trunc(((current_date - ex.pagado_hasta)/7),0) as semanas, "
+		"round((col.cuota_semanal*trunc((current_date - ex.pagado_hasta)/7)::numeric),2) as monto "
+		"from db_app_alumno as a "
+		"full join db_app_encargado as e on a.encargado_id=e.codigo "
+		"join db_app_inscripcion as i on i.alumno_id=a.codigo "
+		"join db_app_expediente as ex on ex.alumno_id=a.codigo "
+		"join db_app_colegiatura as col on col.expediente_id=ex.codigo_expediente "
+		"where i.actual_inscripcion=True and i.grupo_id in "
+		"(SELECT gr.codigo FROM db_app_grupo as gr join db_app_empleado as em on gr.profesor_id=em.codigo "
+		"join db_app_sucursal as s on s.codigo_sucursal=em.sucursal_id "
+		"where gr.activo_grupo=True and em.sucursal_id=" + str(sucursal.codigo_sucursal) +
+		" order by gr.codigo) "
+		"group by a.codigo, grupo_id,pagado_hasta, semanas,monto "
+		"order by semanas "
+		"FETCH FIRST " + str(cantidad) + " ROWS ONLY "
+	)
+	context = {
+		'alumnos' : alumnos
+	}
+	return context
+
+def consultaMorasEstudiantilesGrupo(grupo,cantidad):
+	alumnos = Alumno.objects.raw(
+		"select a.codigo,i.grupo_id as grupo_id, "
+		"(select numero from db_app_telefono as tel "
+		"where tel.encargado_id=a.encargado_id "
+		"FETCH FIRST 1 ROWS ONLY) as tel_encargado, "
+		"(select pago.fecha_pago from db_app_detallepago as pago "
+		"join db_app_colegiatura as cole on cole.codigo_colegiatura=pago.colegiatura_id "
+		"join db_app_expediente as e on e.codigo_expediente=cole.expediente_id "
+		"where e.alumno_id=a.codigo and e.activo_expediente=True and cole.actual_colegiatura=True and pago.cancelado=True "
+		"order by pago.fecha_pago desc "
+		"FETCH FIRST 1 ROWS ONLY) as ult_pago, "
+		"ex.pagado_hasta as pagado_hasta, trunc(((current_date - ex.pagado_hasta)/7),0) as semanas, "
+		"round((col.cuota_semanal*trunc((current_date - ex.pagado_hasta)/7)::numeric),2) as monto "
+		"from db_app_alumno as a "
+		"full join db_app_encargado as e on a.encargado_id=e.codigo "
+		"join db_app_inscripcion as i on i.alumno_id=a.codigo "
+		"join db_app_expediente as ex on ex.alumno_id=a.codigo "
+		"join db_app_colegiatura as col on col.expediente_id=ex.codigo_expediente "
+		"where i.actual_inscripcion=True and i.grupo_id = " + str(grupo) +
+		"group by a.codigo, grupo_id,pagado_hasta, semanas,monto "
+		"order by semanas "
+		"FETCH FIRST " + str(cantidad) + " ROWS ONLY "
+	)
+	context = {
+		'alumnos' : alumnos
 	}
 	return context
 

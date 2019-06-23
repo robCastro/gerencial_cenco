@@ -33,4 +33,5 @@ urlpatterns = [
 	#url(r'^pdf_ingreso_retiros_estudiantes/$', views.RepIngresosRetirosEstudiantes.as_view(), name='pdf_ingreso_retiros_estudiantes'),
 
 	url(r'^pdf_demanda_carreras/$', views.RepDemandaCarreras.as_view(), name='pdf_demanda_carreras'),
+	url(r'^pdf_moras_estudiantiles/(?P<grupo>\d{1,2})/(?P<cantidad>\d{1,2})$',views.RepMorasEstudiantiles.as_view(), name='pdf_moras_estudiantiles'),
 ]
