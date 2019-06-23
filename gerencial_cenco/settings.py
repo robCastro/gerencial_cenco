@@ -79,15 +79,7 @@ WSGI_APPLICATION = 'gerencial_cenco.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'sg_cenco',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    },
-    'st_cenco':{
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'st_cenco',
+        'NAME': 'postgres',
         'USER': 'postgres',
         'PASSWORD': 'postgres',
         'HOST': 'localhost',
