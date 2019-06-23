@@ -327,16 +327,16 @@ def consultaDemandaCarreras():
 				(select municipio_sucursal, telefono_sucursal, direccion_sucursal, nombre_carrera, count(codigo_carrera) as maxi
 				from db_app_sucursal INNER JOIN  db_app_carrera ON codigo_sucursal=sucursal_id 
 				INNER JOIN db_app_expediente ON codigo_carrera=carrera_id INNER JOIN db_app_alumno
-				ON alumno_id=codigo
-				where codigo_sucursal='{}'
+				ON alumno_id=codigo INNER JOIN db_app_detalleestado e on e.alumno_id=codigo
+				where codigo_sucursal='{}' and estado_id in (2,3) and actual_detalle_e=true
 				group by municipio_sucursal, telefono_sucursal, direccion_sucursal,nombre_carrera
 				order by maxi desc limit 1) T1
 				inner JOIN
 				(select municipio_sucursal,nombre_carrera, count(codigo_carrera) as mini
 				from db_app_sucursal INNER JOIN  db_app_carrera ON codigo_sucursal=sucursal_id 
 				INNER JOIN db_app_expediente ON codigo_carrera=carrera_id INNER JOIN db_app_alumno
-				ON alumno_id=codigo
-				where codigo_sucursal='{}'
+				ON alumno_id=codigo INNER JOIN db_app_detalleestado e on e.alumno_id=codigo
+				where codigo_sucursal='{}' and estado_id in (2,3) and actual_detalle_e=true
 				group by municipio_sucursal, telefono_sucursal, direccion_sucursal,nombre_carrera
 				order by mini limit 1) T2 on T1.municipio_sucursal = T2.municipio_sucursal
 				""".format(str(suc.codigo_sucursal),str(suc.codigo_sucursal)))
@@ -351,6 +351,7 @@ def consultaEmpleadosSuc():
 			select T1.municipio_sucursal, T1.telefono_sucursal, T1.direccion_sucursal, T2.nombre, T1.cant from
 			(select municipio_sucursal, telefono_sucursal, direccion_sucursal, codigo_sucursal, count(sucursal_id) as cant
 			from db_app_sucursal INNER JOIN  db_app_empleado ON codigo_sucursal=sucursal_id 
+			where estado='activo'
 			group by municipio_sucursal, telefono_sucursal, direccion_sucursal, codigo_sucursal
 			order by cant desc)T1
 			INNER JOIN
