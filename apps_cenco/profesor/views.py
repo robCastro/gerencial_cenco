@@ -19,21 +19,36 @@ from apps_cenco.db_app.models import Empleado, Grupo, Alumno
 def verDesempenioEstudiantil(request):
     if request.user.groups.filter(name="Profesor").exists():
         prof = Empleado.objects.get(username=request.user)
+        idProf = prof.codigo
+        grupo = Grupo.objects.filter(profesor=idProf, activo_grupo=True)
+        grupos = grupo.order_by('codigo')
         if request.method == 'POST':
-            if 'vistaPrevia' in request.POST:
-                return verSalidaDesempenioEstudiantil(request)
-            if 'descargar' in request.POST:
-                #fechaHoy = str((datetime.now().date().strftime("%d/%m/%Y")))
-                grupo = int(request.POST.get('grupo'))
-                desempenio = int(request.POST.get('desempenio'))
-                cantidad = request.POST.get('cantidad')
-                return redirect('pdf_desempenio_estudiantil', grupo, desempenio, cantidad)
+            grupoVal = int(request.POST.get('grupo'))
+            cantidadVal = int(request.POST.get('cantidad'))
+            cant = 100
+            if grupoVal != 0:
+                grupoSel = Grupo.objects.get(codigo=grupoVal)
+                cant = grupoSel.alumnosInscritos / 2
+                print cant
+            if cantidadVal < cant:
+                if 'vistaPrevia' in request.POST:
+                    return verSalidaDesempenioEstudiantil(request)
+                if 'descargar' in request.POST:
+                    grupo = int(request.POST.get('grupo'))
+                    desempenio = int(request.POST.get('desempenio'))
+                    cantidad = request.POST.get('cantidad')
+                    return redirect('pdf_desempenio_estudiantil', grupo, desempenio, cantidad)
+            else:
+                msj = "Cantidad debe ser menor a la mitad de los alumnos inscritos en el grupo"
+                context = {
+                    'grupos': grupos,
+                    'msj': msj,
+                }
+                return render(request, 'profesor/desempenio-estudiantil.html', context)
         else:
-            idProf = prof.codigo
-            grupo = Grupo.objects.filter(profesor=idProf, activo_grupo=True)
-            grupos = grupo.order_by('codigo')
             context = {
                 'grupos': grupos,
+                'msj': '',
             }
             return render(request, 'profesor/desempenio-estudiantil.html', context)
     else:
@@ -43,26 +58,51 @@ def verDesempenioEstudiantil(request):
 def verInasistenciaEstudiantil(request):
     if request.user.groups.filter(name="Profesor").exists():
         prof = Empleado.objects.get(username=request.user)
+        idProf = prof.codigo
+        grupo = Grupo.objects.filter(profesor=idProf, activo_grupo=True)
+        grupos = grupo.order_by('codigo')
+        fechaHoy = datetime.now().date()
+        fechaInicio = fechaHoy - timedelta(days=30)
         if request.method == 'POST':
-            if 'vistaPrevia' in request.POST:
-                return verSalidaInasistenciaEstudiantil(request)
-            if 'descargar' in request.POST:
-                #fechaHoy = str((datetime.now().date().strftime("%d/%m/%Y")))
-                grupo = int(request.POST.get('grupo'))
-                cantidad = request.POST.get('cantidad')
-                fechaInicio = request.POST.get('fecha_inicio')
-                fechaFin = request.POST.get('fecha_fin')
-                return redirect('pdf_inasistencia_estudiantil', grupo, fechaInicio, fechaFin, cantidad)
+            fechaInicioVal = datetime.strptime(request.POST.get('fecha_inicio'), '%Y-%m-%d')
+            fechaFinVal = datetime.strptime(request.POST.get('fecha_fin'), '%Y-%m-%d')
+            grupoVal = int(request.POST.get('grupo'))
+            cantidadVal = int(request.POST.get('cantidad'))
+            cant=100
+            if grupoVal != 0:
+                grupoSel = Grupo.objects.get(codigo=grupoVal)
+                cant=grupoSel.alumnosInscritos/2
+            if fechaFinVal > fechaInicioVal and cantidadVal < cant:
+                if 'vistaPrevia' in request.POST:
+                    return verSalidaInasistenciaEstudiantil(request)
+                if 'descargar' in request.POST:
+                    grupo = int(request.POST.get('grupo'))
+                    cantidad = request.POST.get('cantidad')
+                    fechaInicio = request.POST.get('fecha_inicio')
+                    fechaFin = request.POST.get('fecha_fin')
+                    return redirect('pdf_inasistencia_estudiantil', grupo, fechaInicio, fechaFin, cantidad)
+            else:
+                msj=''
+                if fechaFinVal <= fechaInicioVal and cantidadVal >= cant:
+                    msj = " Fecha Fin debe ser mayor a Fecha Inicio. " + "Cantidad debe ser menor a la mitad de los alumnos inscritos en el grupo."
+                else:
+                    if fechaFinVal <= fechaInicioVal:
+                        msj = "Fecha Fin debe ser mayor a Fecha Inicio"
+                    if cantidadVal >= cant:
+                        msj = "Cantidad debe ser menor a la mitad de los alumnos inscritos en el grupo"
+                context = {
+                    'grupos': grupos,
+                    'fechaHoy': str(fechaHoy),
+                    'fechaInicio': str(fechaInicio),
+                    'msj': msj,
+                }
+                return render(request, 'profesor/inasistencia-estudiantil.html', context)
         else:
-            idProf = prof.codigo
-            grupo = Grupo.objects.filter(profesor=idProf, activo_grupo=True)
-            grupos = grupo.order_by('codigo')
-            fechaHoy = datetime.now().date()
-            fechaInicio = fechaHoy - timedelta(days=30)
             context = {
                 'grupos': grupos,
                 'fechaHoy': str(fechaHoy),
                 'fechaInicio': str(fechaInicio),
+                'msj':'',
             }
             return render(request, 'profesor/inasistencia-estudiantil.html', context)
     else:
@@ -243,7 +283,7 @@ def consultaDesempenioEstudiantilTodos(idProf, desempenio, cantidad):
             "join db_app_examen as ex on ex.codigo_examen=e.examen_id "
             "join db_app_inscripcion as i on i.alumno_id=a.codigo "
             "where i.actual_inscripcion=True and c.actual_cursa=True and i.grupo_id in "
-            "(select gr.codigo from db_app_grupo as gr where gr.profesor_id="+str(idProf)+") "
+            "(select gr.codigo from db_app_grupo as gr where gr.profesor_id="+str(idProf)+" and gr.activo_grupo=True) "
             "group by a.codigo,grupo_id "
             "order by nota desc "
             "FETCH FIRST "+str(cantidad)+" ROWS ONLY"
@@ -256,7 +296,7 @@ def consultaDesempenioEstudiantilTodos(idProf, desempenio, cantidad):
             "join db_app_examen as ex on ex.codigo_examen=e.examen_id "
             "join db_app_inscripcion as i on i.alumno_id=a.codigo "
             "where i.actual_inscripcion=True and c.actual_cursa=True and i.grupo_id in "
-            "(select gr.codigo from db_app_grupo as gr where gr.profesor_id="+str(idProf)+") "
+            "(select gr.codigo from db_app_grupo as gr where gr.profesor_id="+str(idProf)+" and gr.activo_grupo=True) "
             "group by a.codigo,grupo_id "
             "order by nota asc "
             "FETCH FIRST "+str(cantidad)+" ROWS ONLY"

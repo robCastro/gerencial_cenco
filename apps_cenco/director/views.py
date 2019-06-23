@@ -58,18 +58,33 @@ def verIngresoEconSuc(request):
 def verMorasEstudiantiles(request):
 	if request.user.groups.filter(name="Director").exists():
 		sucursal = Empleado.objects.get(username=request.user).sucursal
+		grupos = consultaGruposSucursal(sucursal)['grupos']
 		if request.method == 'POST':
-			if 'vistaPrevia' in request.POST:
-				return verSalidaMorasEstudiantiles(request)
-			if 'descargar' in request.POST:
-				#fechaHoy = str((datetime.now().date().strftime("%d/%m/%Y")))
-				grupo = int(request.POST.get('grupo'))
-				cantidad = request.POST.get('cantidad')
-				return redirect('pdf_moras_estudiantiles', grupo,cantidad)
+			grupoVal = int(request.POST.get('grupo'))
+			cantidadVal = int(request.POST.get('cantidad'))
+			cant = 100
+			if grupoVal != 0:
+				grupoSel = Grupo.objects.get(codigo=grupoVal)
+				cant = grupoSel.alumnosInscritos / 2
+				print cant
+			if cantidadVal < cant:
+				if 'vistaPrevia' in request.POST:
+					return verSalidaMorasEstudiantiles(request)
+				if 'descargar' in request.POST:
+					grupo = int(request.POST.get('grupo'))
+					cantidad = request.POST.get('cantidad')
+					return redirect('pdf_moras_estudiantiles', grupo,cantidad)
+			else:
+				msj = "Cantidad debe ser menor a la mitad de los alumnos inscritos en el grupo"
+				context = {
+					'grupos': grupos,
+					'msj': msj,
+				}
+				return render(request, 'director/moras-estudiantiles.html', context)
 		else:
-			grupos = consultaGruposSucursal(sucursal)['grupos']
 			context = {
 				'grupos': grupos,
+				'msj':'',
 			}
 			return render(request, 'director/moras-estudiantiles.html', context)
 	else:

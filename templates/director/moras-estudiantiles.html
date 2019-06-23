@@ -16,6 +16,16 @@
 			<div class="card-header">
 				<h5 class="title">Reporte de Moras Estudiantiles</h5>
 			</div>
+            {% if msj|length != 0 %}
+                <div class="alert alert-danger alert-dismissible fade show">
+                    <button type="button" aria-hidden="true" class="close" data-dismiss="alert" aria-label="Close">
+                        <i class="nc-icon nc-simple-remove"></i>
+                    </button>
+                    <span class="title">
+                        {{msj}}
+                    </span>
+                </div>
+            {% endif %}
                 <form method="post">
 					{% csrf_token %}
 			<div class="card-body">
@@ -38,7 +48,7 @@
 							<h6 class="ml-5 pt-2">Cantidad:</h6>
 						</div>
 						<div class="col-md-3">
-							<input type="number" name="cantidad" class="form-control">
+							<input type="number" name="cantidad" class="form-control" min="1">
 						</div>
 					</div>
 			</div>
