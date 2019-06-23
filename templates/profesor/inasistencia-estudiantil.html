@@ -48,7 +48,7 @@
 							<h6 class="ml-5 pt-2">Cantidad:</h6>
 						</div>
 						<div class="col-md-3">
-							<input type="number" name="cantidad" class="form-control" min="1">
+							<input type="number" name="cantidad" class="form-control" min="1" required>
 						</div>
 					</div>
                     <div class="row mt-4 justify-content-center">
@@ -56,7 +56,7 @@
                             <h6 class="ml-5 pt-2">Fecha Inicio:</h6>
                         </div>
                         <div class="col-md-3">
-                            <input type="date" name="fecha_inicio" class="form-control" value="{{fechaInicio}}">
+                            <input type="date" name="fecha_inicio" class="form-control" value="{{fechaInicio}}" required>
                         </div>
                     </div>
                     <div class="row mt-4 justify-content-center">
@@ -64,7 +64,7 @@
                             <h6 class="ml-5 pt-2">Fecha Fin:</h6>
                         </div>
                         <div class="col-md-3">
-                            <input type="date" name="fecha_fin" class="form-control" value="{{fechaHoy}}">
+                            <input type="date" name="fecha_fin" class="form-control" value="{{fechaHoy}}" required>
                         </div>
                     </div>
 			</div>

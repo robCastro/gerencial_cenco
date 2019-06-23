@@ -24,6 +24,6 @@ urlpatterns = [
 	url(r'^pdf_desempenio_didactico/(?P<idSucursal>\d{1})$',
 		views.RepDesempenioProfesores.as_view(),
 		name='pdf_desempenio_didactico'),
-    url(r'^pdf_demanda_carreras/$', views.RepDemandaCarreras.as_view(), name='pdf_demanda_carreras'),
+    url(r'^pdf_demanda_carreras/$', views.RepDemandaCarreras.as_view(), name='pdf_demanda_carreras_dir'),
 	url(r'^pdf_moras_estudiantiles/(?P<grupo>\d{1,2})/(?P<cantidad>\d{1,2})$',views.RepMorasEstudiantiles.as_view(), name='pdf_moras_estudiantiles'),
 ]
