@@ -84,6 +84,14 @@ DATABASES = {
         'PASSWORD': 'postgres',
         'HOST': 'localhost',
         'PORT': '5432',
+    #},
+    #'st-cenco': {
+    #    'ENGINE': 'django.db.backends.postgresql',
+    #    'NAME': 'st_cenco',
+    #    'USER': 'postgres',
+    #    'PASSWORD': 'postgres',
+    #    'HOST': '192.168.1.128',
+    #    'PORT': '5432',
     }
 }
 
