@@ -13,7 +13,7 @@ from django.contrib.auth.models import User, Group
 from apps_cenco.db_app.models import Sucursal, Encargado, Alumno, Empleado, Carrera, Telefono, Expediente
 from apps_cenco.db_app.models import Colegiatura, DetallePago, Horario, Grupo, Inscripcion, Asistencia
 from apps_cenco.db_app.models import Estado, DetalleEstado, Materia, DetallePensum, Cursa, Examen, Evaluacion
-
+import traceback
 # Create your views here.
 
 def principal(request):
@@ -146,9 +146,9 @@ def verPantallaETL(request):
             
 
             msj = "ETL finalizado con exito"
-        except:
-            msj = "Ocurrió un Error al realizar el ETL, notificar a Técnico"
-            print msj
+        except Exception as e:
+            print e.message
+            msj = "Ocurrió un Error al realizar el ETL, notificar a Técnico: " + str(e.message.decode('utf8'))
             esDanger = True
     context = {
         'msj' : msj,
